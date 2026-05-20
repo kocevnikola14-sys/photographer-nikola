@@ -3,29 +3,51 @@ name: Update manifest.json
 on:
   push:
     paths:
-      - 'photos/**'  # ko dodaš/spremeniš slike v mapi photos
-  workflow_dispatch:  # omogoča ročni zagon
+      - 'photos/**'
+    branches:
+      - main  # ali master, odvisno kako se imenuje tvoja glavna veja
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  update:
+  update-manifest:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ci]')
     
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-    
-    - name: Run manifest generator
-      run: python generate-manifest.py
-    
-    - name: Commit and push if changed
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add photos/manifest.json
-        git diff --staged --quiet || (git commit -m "Auto-update manifest.json [skip ci]" && git push)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Generate manifest.json
+        run: |
+          python generate-manifest.py
+          cat photos/manifest.json  # za debugging - vidiš kaj je generirano
+      
+      - name: Check for changes
+        id: git-check
+        run: |
+          git status --porcelain
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push if changed
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add photos/manifest.json
+          git commit -m "Auto-update manifest.json [skip ci]"
+          git push
