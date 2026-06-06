@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photographer Nikola</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f0ede7; --ink: #1c1c1c; --accent: #3d6b4f;
+      --accent2: #7aab8a; --muted: #888078; --white: #faf9f6;
+      --border: rgba(28,28,28,0.12);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.1rem 4rem;
+      background: rgba(240,237,231,0.92); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border); gap: 1rem; flex-wrap: nowrap;
+    }
+    nav .logo { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--accent); letter-spacing: 0.02em; }
+    nav ul { list-style: none; display: flex; gap: 2.5rem; }
+    nav ul a { text-decoration: none; color: var(--ink); font-size: 0.78rem; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.55; transition: opacity 0.25s, color 0.25s; }
+    nav ul a:hover { opacity: 1; color: var(--accent); }
+
+    /* LANGUAGE SWITCHER */
+    .lang-switcher { display: flex; gap: 0.3rem; }
+    .lang-btn {
+      background: none; border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.28rem 0.6rem; font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all 0.2s;
+    }
+    .lang-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .lang-btn.active { color: var(--white); background: var(--accent); border-color: var(--accent); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; padding: 9rem 5rem 6rem 5rem; gap: 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-left { position: relative; z-index: 1; }
+    .hero-tag { display: inline-block; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); background: var(--accent); padding: 0.35em 0.9em; border-radius: 2px; margin-bottom: 1.8rem; opacity: 0; animation: rise 0.8s 0.2s forwards; }
+    h1.hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(3.2rem, 6.5vw, 6.5rem); line-height: 1.0; font-weight: 400; margin-bottom: 1.6rem; opacity: 0; animation: rise 0.8s 0.4s forwards; }
+    h1.hero-title em { font-style: italic; color: var(--accent); }
+    .hero-rule { width: 48px; height: 2px; background: var(--accent); margin: 1.8rem 0; opacity: 0; animation: rise 0.8s 0.6s forwards; }
+    .hero-bio { font-size: 1rem; line-height: 1.85; color: rgba(28,28,28,0.65); max-width: 460px; opacity: 0; animation: rise 0.8s 0.8s forwards; }
+    .hero-right { position: relative; display: flex; align-items: center; justify-content: center; opacity: 0; animation: rise 1s 0.5s forwards; overflow: visible; padding-bottom: 4rem; }
+    .hero-right::before { content: ''; position: absolute; width: 85%; padding-bottom: 85%; border-radius: 50%; background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%); opacity: 0.12; z-index: 0; }
+    .hero-graphic { position: relative; z-index: 1; width: 82%; aspect-ratio: 3/4; background: linear-gradient(160deg, #c8d8c4 0%, #8faa90 100%); border-radius: 8px 8px 60% 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .hero-graphic svg { width: 60px; opacity: 0.35; }
+    .scroll-hint { position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.4rem; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); opacity: 0; animation: rise 0.8s 1.4s forwards; white-space: nowrap; }
+    .scroll-hint::after { content: ''; width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: pulse 1.8s 2s infinite; }
+
+    /* GALLERY */
+    #gallery { background: var(--white); padding: 7rem 5rem; }
+    .sec-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3.5rem; flex-wrap: wrap; gap: 1rem; }
+    .sec-kicker { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+    h2.sec-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 400; line-height: 1.1; }
+    h2.sec-title em { font-style: italic; color: var(--accent); }
+
+    /* Category tabs */
+    .cat-tabs {
+      display: flex; gap: 0; margin-bottom: 3rem;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .cat-tab {
+      background: none; border: none; border-bottom: 2.5px solid transparent;
+      margin-bottom: -1.5px; padding: 0.7rem 1.6rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .cat-tab:hover { color: var(--ink); }
+    .cat-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+
+    /* Category panels */
+    .cat-panel { display: none; }
+    .cat-panel.active { display: block; }
+
+    .cat-loading {
+      text-align: center; padding: 4rem 0;
+      color: var(--muted); font-size: 0.85rem; letter-spacing: 0.08em;
+    }
+
+    .masonry {
+      columns: 3;
+      column-gap: 0.75rem;
+    }
+    @media (max-width: 900px) { .masonry { columns: 2; } }
+    @media (max-width: 560px) { .masonry { columns: 1; } }
+    .photo-item {
+      break-inside: avoid;
+      margin-bottom: 0.75rem;
+      position: relative; overflow: hidden; border-radius: 6px;
+      cursor: pointer; opacity: 0; transform: translateY(16px);
+      animation: rise 0.55s forwards;
+    }
+    .photo-item img {
+      display: block; width: 100%; height: auto;
+      transition: transform 0.5s ease, filter 0.35s;
+      filter: saturate(0.88);
+    }
+    .photo-item:hover img { transform: scale(1.03); filter: saturate(1); }
+    .photo-item:hover img { transform: scale(1.03); filter: saturate(1); }
+    .photo-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(28,28,28,0.4) 0%, transparent 55%); opacity: 0; transition: opacity 0.35s; pointer-events: none; }
+    .photo-item:hover .photo-overlay { opacity: 1; }
+    .empty-gallery { text-align: center; padding: 5rem 0; color: var(--muted); font-size: 0.88rem; letter-spacing: 0.06em; grid-column: 1/-1; }
+
+    /* LIGHTBOX */
+    #lightbox {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      align-items: center; justify-content: center;
+      background: rgba(10,10,10,0.96);
+    }
+    #lightbox.active { display: flex; animation: lbIn 0.25s ease forwards; }
+    #lightbox.closing { animation: lbOut 0.2s ease forwards; pointer-events: none; }
+    #lightbox-img-wrap {
+      position: relative; display: flex;
+      align-items: center; justify-content: center;
+    }
+    #lightbox img {
+      max-width: 88vw; max-height: 86vh; object-fit: contain;
+      border-radius: 6px; box-shadow: 0 24px 80px rgba(0,0,0,0.8);
+      display: block; transition: opacity 0.2s ease;
+    }
+    #lightbox-close {
+      position: absolute; top: 1.2rem; right: 1.5rem;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; font-size: 1.1rem; cursor: pointer; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; font-family: inherit;
+    }
+    #lightbox-close:hover { background: rgba(255,255,255,0.25); }
+    .lb-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; font-size: 1.3rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; z-index: 10; font-family: inherit;
+    }
+    .lb-arrow:hover { background: rgba(255,255,255,0.25); }
+    #lb-prev { left: -3.8rem; }
+    #lb-next { right: -3.8rem; }
+    #lb-counter {
+      position: absolute; bottom: 1.2rem; left: 50%; transform: translateX(-50%);
+      font-size: 0.72rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.4);
+    }
+    @media (max-width: 768px) {
+      #lb-prev { left: 0.4rem; } #lb-next { right: 0.4rem; }
+      #lightbox img { max-width: 95vw; max-height: 78vh; }
+    }
+    @keyframes lbIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes lbOut { from { opacity: 1; } to { opacity: 0; } }
+
+    /* CONTACT */
+    #contact { padding: 7rem 5rem; background: var(--bg); border-top: 1px solid var(--border); }
+    .contact-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4rem; align-items: start; }
+    .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+    .contact-block { padding-bottom: 1.8rem; border-bottom: 1px solid var(--border); }
+    .contact-block:last-child { border-bottom: none; padding-bottom: 0; }
+    .contact-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+    .contact-val { font-family: 'DM Serif Display', serif; font-size: 1.2rem; }
+    .contact-val a { color: var(--ink); text-decoration: none; transition: color 0.25s; }
+    .contact-val a:hover { color: var(--accent); }
+    .contact-sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
+
+    /* PROFILE */
+    .profile-area { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+    .profile-circle { width: 200px; height: 200px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #c8d8c4, #8faa90); display: flex; align-items: center; justify-content: center; border: 3px solid var(--border); }
+    .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-circle .profile-placeholder { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: rgba(28,28,28,0.35); }
+    .profile-circle .profile-placeholder svg { width: 40px; }
+    .profile-name { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--ink); text-align: center; }
+    .profile-role { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; text-align: center; }
+
+    footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); font-size: 0.68rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; background: var(--white); }
+
+    @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; gap: 3rem; } }
+    @media (max-width: 768px) {
+      nav { padding: 1.1rem 1.5rem; }
+      nav ul { display: none; }
+      #hero { grid-template-columns: 1fr; padding: 8rem 1.5rem 7rem; }
+      .hero-right { display: none; }
+      .scroll-hint { display: none; }
+      #gallery { padding: 5rem 1.5rem; }
+      #contact { padding: 5rem 1.5rem; }
+    }
+
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scaleY(0.8); } 50% { opacity: 1; transform: scaleY(1); } }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">Photographer Nikola</div>
+    <ul>
+      <li><a href="#hero" data-i18n="navHome">Domov</a></li>
+      <li><a href="#gallery" data-i18n="navGallery">Galerija</a></li>
+      <li><a href="#contact" data-i18n="navContact">Kontakt</a></li>
+    </ul>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="sl">SL</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="mk">MK</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left">
+      <span class="hero-tag" data-i18n="heroTag">Fotograf &amp; Vizualni Pripovedovalec</span>
+      <h1 class="hero-title">Photographer<br /><em>Nikola</em></h1>
+      <div class="hero-rule"></div>
+      <p class="hero-bio" data-i18n="heroBio">
+        Moja pot se je začela z darilom — fotoaparatom, ki mi je odprl povsem nov pogled na svet.
+        Ta trenutek je sprožil verigo dogodkov: kmalu se je okoli skupne strasti zbrala majhna skupina
+        prijateljev, ki smo skupaj hodili na terene, si delili napake in izkušnje, eksperimentirali
+        s svetlobo in kadri ter se drug od drugega učili. Kar se je začelo kot hobi, je postalo
+        skupna avantura — in iz te avanture je zrasla fotografija, ki jo danes delim z vami.
+      </p>
+    </div>
+    <div class="hero-right">
+      <div class="hero-graphic">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="18" width="56" height="38" rx="5" stroke="#1c1c1c" stroke-width="3"/>
+          <circle cx="32" cy="37" r="11" stroke="#1c1c1c" stroke-width="3"/>
+          <circle cx="32" cy="37" r="5" stroke="#1c1c1c" stroke-width="2.5"/>
+          <path d="M22 18l4-8h16l4 8" stroke="#1c1c1c" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="52" cy="26" r="3" fill="#1c1c1c"/>
+        </svg>
+      </div>
+
+    </div>
+    <div class="scroll-hint" data-i18n="scrollHint">Premakni se navzdol</div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="sec-header">
+      <div>
+        <p class="sec-kicker" data-i18n="galleryKicker">Moje Delo</p>
+        <h2 class="sec-title" data-i18n="galleryTitle">Izbrane <em>Fotografije</em></h2>
+      </div>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="cat-tabs">
+      <button class="cat-tab active" data-cat="koncerti" data-i18n="catKoncerti">Dogodki</button>
+      <button class="cat-tab" data-cat="portreti" data-i18n="catPortreti">Portreti</button>
+      <button class="cat-tab" data-cat="mesana" data-i18n="catMesana">Mešana Zbirka</button>
+    </div>
+
+    <!-- Koncerti -->
+    <div class="cat-panel active" id="panel-koncerti">
+      <div class="cat-loading" data-i18n="loading">Nalagam fotografije…</div>
+      <div class="masonry" id="grid-koncerti"></div>
+    </div>
+
+    <!-- Portreti -->
+    <div class="cat-panel" id="panel-portreti">
+      <div class="cat-loading" data-i18n="loading">Nalagam fotografije…</div>
+      <div class="masonry" id="grid-portreti"></div>
+    </div>
+
+    <!-- Mešana zbirka -->
+    <div class="cat-panel" id="panel-mesana">
+      <div class="cat-loading" data-i18n="loading">Nalagam fotografije…</div>
+      <div class="masonry" id="grid-mesana"></div>
+    </div>
+
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox">
+    <button id="lightbox-close">✕</button>
+    <div id="lightbox-img-wrap">
+      <button class="lb-arrow" id="lb-prev">&#8592;</button>
+      <img id="lightbox-img" src="" alt="" />
+      <button class="lb-arrow" id="lb-next">&#8594;</button>
+    </div>
+    <div id="lb-counter"></div>
+  </div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div style="max-width:1200px; margin:0 auto; margin-bottom:3.5rem;">
+      <p class="sec-kicker" data-i18n="contactKicker">Poveživa se</p>
+      <h2 class="sec-title" data-i18n="contactTitle">Kontakt &amp; <em>Sodelovanje</em></h2>
+    </div>
+    <div class="contact-grid">
+
+      <!-- Profile photo — loaded from profile/photo.jpg (or .png / .webp) -->
+      <div class="profile-area">
+        <div class="profile-circle" id="profileCircle">
+          <img id="profileImg" alt="Nikola Kocev" style="display:none;" />
+          <div class="profile-placeholder" id="profilePlaceholder">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="22" r="12" stroke="#1c1c1c" stroke-width="2.5"/>
+              <path d="M8 56c0-13.255 10.745-24 24-24s24 10.745 24 24" stroke="#1c1c1c" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <p class="profile-name">Nikola Kocev</p>
+        <p class="profile-role" data-i18n="profileRole">Fotograf · Slovenija</p>
+      </div>
+
+      <!-- Intro text -->
+      <div>
+        <p style="font-size:0.95rem;line-height:1.85;color:rgba(28,28,28,0.65);" data-i18n="contactIntro">
+          Iščeš fotografa za posebne trenutke, projekt ali kreativno idejo?
+          Rad prisluhnjem vsaki zgodbi. Piši ali pokliči — skupaj najdeva pravo sliko.
+        </p>
+      </div>
+
+      <!-- Contact details -->
+      <div class="contact-info">
+        <div class="contact-block">
+          <p class="contact-label">Email</p>
+          <p class="contact-val"><a href="mailto:kocevnikola14@gmail.com">kocevnikola14@gmail.com</a></p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label" data-i18n="phone">Telefon</p>
+          <p class="contact-val"><a href="tel:+38670375889">070 375 889</a></p>
+          <p class="contact-sub" data-i18n="available">Dosegljiv vsak dan med 15:00 – 20:00</p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label" data-i18n="location">Lokacija</p>
+          <p class="contact-val">Slovenija</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>&copy; 2026 Photographer Nikola — <span data-i18n="footerRights">Vse pravice pridržane</span></footer>
+
+  <script>
+    // ── TRANSLATIONS ──
+    const T = {
+      sl: {
+        navHome:"Domov", navGallery:"Galerija", navContact:"Kontakt",
+        heroTag:"Fotograf & Vizualni Pripovedovalec",
+        heroBio:"Moja pot se je začela z darilom — fotoaparatom, ki mi je odprl povsem nov pogled na svet. Ta trenutek je sprožil verigo dogodkov: kmalu se je okoli skupne strasti zbrala majhna skupina prijateljev, ki smo skupaj hodili na terene, si delili napake in izkušnje, eksperimentirali s svetlobo in kadri ter se drug od drugega učili. Kar se je začelo kot hobi, je postalo skupna avantura — in iz te avanture je zrasla fotografija, ki jo danes delim z vami.",
+        scrollHint:"Premakni se navzdol",
+        galleryKicker:"Moje Delo", galleryTitle:"Izbrane <em>Fotografije</em>",
+        catKoncerti:"Dogodki", catPortreti:"Portreti", catMesana:"Mešana Zbirka",
+        loading:"Nalagam fotografije…", emptyGallery:"— Ni fotografij v tej kategoriji —",
+        contactKicker:"Poveživa se", contactTitle:"Kontakt &amp; <em>Sodelovanje</em>",
+        contactIntro:"Iščeš fotografa za posebne trenutke, projekt ali kreativno idejo? Rad prisluhnjem vsaki zgodbi. Piši ali pokliči — skupaj najdeva pravo sliko.",
+        profileRole:"Fotograf · Slovenija", phone:"Telefon", location:"Lokacija",
+        available:"Dosegljiv vsak dan med 15:00 – 20:00", footerRights:"Vse pravice pridržane",
+      },
+      en: {
+        navHome:"Home", navGallery:"Gallery", navContact:"Contact",
+        heroTag:"Photographer & Visual Storyteller",
+        heroBio:"My journey began with a gift — a camera that opened up a whole new way of seeing the world. That moment set off a chain of events: soon, a small group of friends gathered around a shared passion, going out together, sharing mistakes and experiences, experimenting with light and composition, and learning from one another. What started as a hobby became a shared adventure — and from that adventure grew the photography I share with you today.",
+        scrollHint:"Scroll down",
+        galleryKicker:"My Work", galleryTitle:"Selected <em>Photos</em>",
+        catKoncerti:"Events", catPortreti:"Portraits", catMesana:"Mixed Collection",
+        loading:"Loading photos…", emptyGallery:"— No photos in this category yet —",
+        contactKicker:"Get in touch", contactTitle:"Contact &amp; <em>Collaboration</em>",
+        contactIntro:"Looking for a photographer for special moments, a project, or a creative idea? I love hearing every story. Write or call — together we'll find the right shot.",
+        profileRole:"Photographer · Slovenia", phone:"Phone", location:"Location",
+        available:"Available every day 15:00 – 20:00", footerRights:"All rights reserved",
+      },
+      mk: {
+        navHome:"Дома", navGallery:"Галерија", navContact:"Контакт",
+        heroTag:"Фотограф и Визуелен Раскажувач",
+        heroBio:"Мојот пат започна со подарок — фотоапарат кој ми ги отвори очите за сосема нов начин на гледање на светот. Тој момент предизвика низа настани: набрзо, мала група пријатели се собра околу заедничката страст, заедно излегувавме на терен, ги делевме грешките и искуствата, експериментиравме со светлина и кадри и учевме едни од други. Она што започна како хоби, стана заедничка авантура — и од таа авантура израсна фотографијата која денес ја споделувам со вас.",
+        scrollHint:"Скролај надолу",
+        galleryKicker:"Мојата Работа", galleryTitle:"Избрани <em>Фотографии</em>",
+        catKoncerti:"Настани", catPortreti:"Портрети", catMesana:"Мешана Збирка",
+        loading:"Вчитувам фотографии…", emptyGallery:"— Нема фотографии во оваа категорија —",
+        contactKicker:"Поврземе се", contactTitle:"Контакт &amp; <em>Соработка</em>",
+        contactIntro:"Барате фотограф за посебни моменти, проект или креативна идеја? Со задоволство ќе ве ислушам. Пишете или јавете се — заедно ќе ја најдеме вистинската слика.",
+        profileRole:"Фотограф · Словенија", phone:"Телефон", location:"Локација",
+        available:"Достапен секој ден 15:00 – 20:00", footerRights:"Сите права се задржани",
+      }
+    };
+
+    let lang = 'sl';
+
+    // Auto-detect language based on location
+    async function detectLang() {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 3000); // 3s timeout
+        const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+        clearTimeout(timeout);
+        const data = await res.json();
+        const country = data.country_code;
+        if (country === 'SI') return 'sl';
+        if (country === 'MK') return 'mk';
+        return 'en';
+      } catch(e) {
+        return 'sl'; // fallback on timeout or error
+      }
+    }
+
+    // Detect language async — apply immediately with fallback, update when ready
+    applyLang('sl'); // show page immediately
+    detectLang().then(detected => applyLang(detected));
+
+    function applyLang(l) {
+      lang = l;
+      const t = T[l];
+      document.documentElement.lang = l;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (t[k] !== undefined) el.innerHTML = t[k];
+      });
+      document.querySelectorAll('.empty-gallery').forEach(el => {
+        el.textContent = t.emptyGallery;
+      });
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+
+    // ── PROFILE PHOTO — tries profile/photo.jpg, .jpeg, .png, .webp ──
+    const profileImg = document.getElementById('profileImg');
+    const profilePH  = document.getElementById('profilePlaceholder');
+    const extensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+    (async function loadProfile() {
+      for (const ext of extensions) {
+        try {
+          const res = await fetch(`profile/photo.${ext}?t=${Date.now()}`, { method: 'HEAD' });
+          if (res.ok) {
+            profileImg.src = `profile/photo.${ext}?t=${Date.now()}`;
+            profileImg.style.display = 'block';
+            profilePH.style.display = 'none';
+            break;
+          }
+        } catch(e) { /* try next */ }
+      }
+    })();
+
+    // ── GALLERY — categories ──
+    const lightbox = document.getElementById('lightbox');
+    const lbImg    = document.getElementById('lightbox-img');
+    const lbClose  = document.getElementById('lightbox-close');
+
+    const CATEGORIES = [
+      { key: 'koncerti', folder: 'koncerti' },
+      { key: 'portreti', folder: 'portreti' },
+      { key: 'mesana',   folder: 'mesana-zbirka' },
+    ];
+
+    // Store files per category for lightbox navigation
+    const catFiles = { koncerti: [], portreti: [], mesana: [] };
+    let activecat = 'koncerti';
+
+    async function loadCategory(cat) {
+      const folder = CATEGORIES.find(c => c.key === cat).folder;
+      const grid   = document.getElementById('grid-' + cat);
+      const panel  = document.getElementById('panel-' + cat);
+      const loader = panel.querySelector('.cat-loading');
+
+      // Already loaded
+      if (grid.dataset.loaded === '1') return;
+
+      try {
+        const res = await fetch(folder + '/manifest.json?t=' + Date.now());
+        if (!res.ok) throw new Error();
+        const files = await res.json();
+        if (loader) loader.remove();
+        if (!files.length) { showEmptyGrid(grid); return; }
+        catFiles[cat] = files;
+        renderGrid(grid, files, folder);
+        grid.dataset.loaded = '1';
+      } catch(e) {
+        if (loader) loader.remove();
+        showEmptyGrid(grid);
+        grid.dataset.loaded = '1';
+      }
+    }
+
+    function showEmptyGrid(grid) {
+      const msg = document.createElement('div');
+      msg.className = 'empty-gallery';
+      msg.style.cssText = 'column-span:all';
+      msg.textContent = T[lang].emptyGallery;
+      grid.appendChild(msg);
+    }
+
+    function renderGrid(grid, files, folder) {
+      grid.innerHTML = '';
+      files.forEach((filename, idx) => {
+        const src  = folder + '/' + filename;
+        const item = document.createElement('div');
+        item.className = 'photo-item';
+        item.style.animationDelay = idx * 0.06 + 's';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+
+        const ov = document.createElement('div');
+        ov.className = 'photo-overlay';
+
+        item.addEventListener('click', () => openLightbox(files, idx, folder));
+        img.addEventListener('click', (e) => { e.stopPropagation(); openLightbox(files, idx, folder); });
+
+        item.appendChild(img);
+        item.appendChild(ov);
+        grid.appendChild(item);
+      });
+    }
+
+    // Tab switching
+    document.querySelectorAll('.cat-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const cat = tab.dataset.cat;
+        activecat = cat;
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.cat-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + cat).classList.add('active');
+        loadCategory(cat);
+      });
+    });
+
+    // Load first category immediately on page load
+    loadCategory('koncerti');
+    // Preload other categories in background
+    setTimeout(() => loadCategory('portreti'), 800);
+    setTimeout(() => loadCategory('mesana'), 1600);
+
+    let lbIndex = 0;
+    let lbFiles = [];
+    let lbFolder = '';
+
+    function openLightbox(files, idx, folder) {
+      lbFiles = files; lbIndex = idx; lbFolder = folder;
+      showLbImage();
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function showLbImage() {
+      const src = lbFolder + '/' + lbFiles[lbIndex];
+      lbImg.style.opacity = '0';
+      lbImg.style.transform = 'scale(0.92)';
+      lbImg.src = src;
+      lbImg.onload = () => {
+        lbImg.style.transition = 'transform 0.35s cubic-bezier(0.34,1.3,0.64,1), opacity 0.28s ease';
+        lbImg.style.opacity = '1';
+        lbImg.style.transform = 'scale(1)';
+      };
+      const counter = document.getElementById('lb-counter');
+      if (counter) counter.textContent = (lbIndex + 1) + ' / ' + lbFiles.length;
+      // hide arrows if only 1 image
+      document.getElementById('lb-prev').style.display = lbFiles.length > 1 ? 'flex' : 'none';
+      document.getElementById('lb-next').style.display = lbFiles.length > 1 ? 'flex' : 'none';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.add('closing');
+      lbImg.style.opacity = '0';
+      lbImg.style.transform = 'scale(0.92)';
+      setTimeout(() => {
+        lightbox.classList.remove('active');
+        lightbox.classList.remove('closing');
+        lbImg.src = '';
+        document.body.style.overflow = '';
+      }, 250);
+    }
+
+    document.getElementById('lb-prev').addEventListener('click', e => {
+      e.stopPropagation();
+      lbIndex = (lbIndex - 1 + lbFiles.length) % lbFiles.length;
+      showLbImage();
+    });
+
+    document.getElementById('lb-next').addEventListener('click', e => {
+      e.stopPropagation();
+      lbIndex = (lbIndex + 1) % lbFiles.length;
+      showLbImage();
+    });
+
+    lbClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') { lbIndex = (lbIndex - 1 + lbFiles.length) % lbFiles.length; showLbImage(); }
+      if (e.key === 'ArrowRight') { lbIndex = (lbIndex + 1) % lbFiles.length; showLbImage(); }
+    });
+  </script>
+</body>
+</html>
