@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import os
 import json
-import sys
 
-# Mape s fotografijami
-CATEGORIES = ['koncerti', 'portreti', 'mesana zbirka']
+# Mape s fotografijami - točna imena!
+CATEGORIES = ['koncerti', 'portreti', 'mesana-zbirka']
 EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
 
 print("🔍 Pregledujem mape...")
@@ -20,14 +19,20 @@ for category in CATEGORIES:
     
     # Preveri ali mapa obstaja
     if not os.path.exists(folder_path):
-        print(f"   ⚠️ Mapa ne obstaja!")
+        print(f"   ⚠️ Mapa ne obstaja! Ustvarjam...")
+        os.makedirs(folder_path, exist_ok=True)
+        # Ustvari prazen manifest.json
+        manifest_path = os.path.join(folder_path, 'manifest.json')
+        with open(manifest_path, 'w', encoding='utf-8') as out:
+            json.dump([], out, ensure_ascii=False, indent=2)
+        print(f"   ✅ Ustvarjena prazna mapa in manifest.json")
         continue
     
     # Poglej vse datoteke v mapi
     all_files = os.listdir(folder_path)
     print(f"   📄 Vse datoteke v mapi: {all_files}")
     
-    # Zberi samo slike
+    # Zberi samo slike (izključi manifest.json)
     files = sorted([
         f for f in all_files
         if os.path.splitext(f)[1].lower() in EXTENSIONS 
