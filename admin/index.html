@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Nadzorna Plošča — Photographer Nikola</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f0ede7;
+      --ink: #1c1c1c;
+      --accent: #3d6b4f;
+      --accent2: #7aab8a;
+      --muted: #888078;
+      --white: #faf9f6;
+      --card-bg: #ffffff;
+      --border: rgba(28,28,28,0.12);
+      --danger: #b9423b;
+      --success: #2e7d32;
+    }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER / NAV */
+    header {
+      background: rgba(240,237,231,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 1.1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--accent);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .admin-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+    }
+    .header-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .header-links a, .header-links button {
+      background: none;
+      border: none;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.2s;
+    }
+    .header-links a:hover, .header-links button:hover {
+      opacity: 1;
+      color: var(--accent);
+    }
+    .logout-btn {
+      border: 1px solid var(--border) !important;
+      padding: 0.4rem 0.9rem;
+      border-radius: 4px;
+    }
+    .logout-btn:hover {
+      border-color: var(--danger) !important;
+      color: var(--danger) !important;
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    /* LOGIN CARD */
+    #loginSection {
+      max-width: 440px;
+      margin: 4rem auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2.8rem;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.04);
+    }
+    .login-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+    .login-subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+    .form-group {
+      margin-bottom: 1.4rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(61,107,79,0.15);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.85rem 1.6rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .btn:hover {
+      background: #2f543d;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--border);
+      width: auto;
+    }
+    .btn-secondary:hover {
+      background: rgba(0,0,0,0.04);
+      border-color: var(--ink);
+    }
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.72rem;
+      width: auto;
+    }
+    .alert-box {
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      margin-bottom: 1.2rem;
+      display: none;
+    }
+    .alert-error {
+      background: #fde8e8;
+      color: var(--danger);
+      border: 1px solid #f8b4b4;
+    }
+    .alert-success {
+      background: #def7ec;
+      color: var(--success);
+      border: 1px solid #bcf0da;
+    }
+
+    /* DASHBOARD SECTIONS */
+    #dashboardSection {
+      display: none;
+    }
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .dash-kicker {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+    .dash-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 400;
+      line-height: 1.1;
+    }
+    .dash-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      header {
+        padding: 1rem 1.5rem;
+      }
+      main {
+        padding: 2rem 1.2rem;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2.2rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+    .card-desc {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-bottom: 1.8rem;
+      line-height: 1.6;
+    }
+
+    /* EVENTS LIST */
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .event-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.2rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .event-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .event-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .event-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    .event-pass {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: monospace;
+      letter-spacing: 0.05em;
+    }
+    .event-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    /* UPLOAD DROPZONE */
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 6px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      background: var(--white);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 1.5rem;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: rgba(61,107,79,0.03);
+    }
+    .dropzone svg {
+      width: 44px;
+      height: 44px;
+      stroke: var(--accent);
+      margin-bottom: 0.8rem;
+      opacity: 0.7;
+    }
+    .dropzone-text {
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--ink);
+    }
+    .dropzone-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* THUMBNAIL PREVIEW STRIP */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+    }
+    .preview-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .preview-count {
+      font-size: 0.78rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+    }
+
+    /* PROGRESS BAR */
+    .progress-wrap {
+      display: none;
+      margin: 1.2rem 0;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #e5e0d8;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.2s;
+    }
+    .progress-text {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      text-align: right;
+    }
+
+    /* INSTRUCTIONS BOX */
+    .info-callout {
+      background: rgba(61,107,79,0.06);
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: 0 6px 6px 0;
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: rgba(28,28,28,0.8);
+    }
+    .info-callout strong {
+      color: var(--accent);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <a href="../" class="header-logo">
+      <span>Photographer Nikola</span>
+      <span class="admin-badge">Admin</span>
+    </a>
+    <div class="header-links">
+      <a href="../">← Domov</a>
+      <a href="../deliver/" target="_blank">Dostava Galerij ↗</a>
+      <button class="logout-btn" id="logoutBtn" style="display:none;">Odjava</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- LOGIN SCREEN -->
+    <section id="loginSection">
+      <h1 class="login-title">Skrbniški Dostop</h1>
+      <p class="login-subtitle">Prijavite se z vašim skrbniškim računom za upravljanje galerij strank.</p>
+
+      <div id="loginAlert" class="alert-box alert-error"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="usernameInput">Uporabniško ime</label>
+          <input type="text" id="usernameInput" class="form-input" placeholder="Uporabniško ime" required autofocus autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="passwordInput">Geslo</label>
+          <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn" id="loginSubmitBtn">Prijava</button>
+      </form>
+    </section>
+
+    <!-- DASHBOARD SCREEN -->
+    <section id="dashboardSection">
+      <div class="dash-header">
+        <div>
+          <p class="dash-kicker">Upravljanje Vsebin</p>
+          <h1 class="dash-title">Nadzorna Plošča <em>Dostave</em></h1>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- LEFT: CREATE NEW GALLERY -->
+        <div class="card">
+          <h2 class="card-title">Nova Galerija za Stranko</h2>
+          <p class="card-desc">Naložite fotografije polne ločljivosti. Sistem bo v brskalniku samodejno ustvaril optimizirane sličice <code>image_name_thumbnail.jpg</code>.</p>
+
+          <div id="createAlert" class="alert-box"></div>
+
+          <form id="createGalleryForm">
+            <div class="form-group">
+              <label class="form-label" for="eventName">Ime dogodka / Stranke (npr. Nikola, Poroka-Ana)</label>
+              <input type="text" id="eventName" class="form-input" placeholder="npr. Nikola" required />
+            </div>
+
+            <div class="form-group">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label class="form-label" for="eventPassword" style="margin-bottom:0;">Geslo za stranko</label>
+                <button type="button" class="btn btn-secondary btn-sm" id="genPassBtn" style="padding:0.2rem 0.5rem; font-size:0.65rem;">Generiraj geslo</button>
+              </div>
+              <input type="text" id="eventPassword" class="form-input" placeholder="Geslo za dostop do galerije" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="thumbQuality">Kakovost predoglednih sličic (Thumbnails)</label>
+              <select id="thumbQuality" class="form-input">
+                <option value="high" selected>Visoka kakovost (1600px, 82% kakovost) — Priporočeno</option>
+                <option value="max">Maksimalna ostrina (2000px, 88% kakovost)</option>
+                <option value="balanced">Uravnoteženo (1200px, 78% kakovost)</option>
+              </select>
+              <span style="font-size: 0.72rem; color: var(--muted); display: block; margin-top: 0.35rem; line-height: 1.4;">
+                Določa raven stiskanja sličic za hitro nalaganje galerije ob ohranjanju visoke ostrine in naravnih barv fotografij.
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Izberite fotografije (polna ločljivost)</label>
+              <div class="dropzone" id="dropzone">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <p class="dropzone-text">Povlecite fotografije sem ali kliknite za izbiro</p>
+                <p class="dropzone-hint">Podprti formati: JPG, JPEG, PNG, WEBP</p>
+                <input type="file" id="fileInput" multiple accept="image/*" style="display:none;" />
+              </div>
+            </div>
+
+            <div id="previewArea" style="display:none;">
+              <p class="preview-count" id="previewCount">Izbranih 0 fotografij</p>
+              <div class="preview-grid" id="previewGrid"></div>
+            </div>
+
+            <div class="progress-wrap" id="progressWrap">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+              </div>
+              <p class="progress-text" id="progressText">Pripravljam sličice: 0%</p>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:1.5rem;">
+              <button type="button" class="btn" id="uploadServerBtn" style="display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Naloži galerijo na strežnik
+              </button>
+              <button type="button" class="btn btn-secondary" id="exportPackageBtn" style="display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Prenesi paket lokalno (Varnostna kopija)
+              </button>
+            </div>
+
+            <div class="info-callout">
+              <strong>Kako deluje:</strong> Ob kliku na <em>"Naloži galerijo na strežnik"</em> brskalnik samodejno pripravi optimizirane sličice <code>_thumbnail.jpg</code> ter fotografije naloži neposredno na strežnik v <code>deliver/Ime_Dogodka/</code>, ustvari <code>manifest.json</code> in posodobi <code>deliver/events.txt</code>. Deluje v vseh brskalnikih (Safari, Chrome, telefon).
+            </div>
+          </form>
+        </div>
+
+        <!-- RIGHT: EXISTING CLIENT GALLERIES -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <h2 class="card-title" style="margin-bottom:0;">Obstoječe Galerije</h2>
+            <button class="btn btn-secondary btn-sm" id="refreshEventsBtn" title="Osveži seznam" style="display:inline-flex; align-items:center; gap:0.35rem;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              Osveži
+            </button>
+          </div>
+          <p class="card-desc">Seznam dogodkov in gesel, prebranih iz <code>deliver/events.txt</code>.</p>
+
+          <div class="events-list" id="eventsList">
+            <p style="color:var(--muted); font-size:0.85rem;">Nalagam galerije…</p>
+          </div>
+
+          <div class="info-callout" style="margin-top:2rem;">
+            <strong>Povezava za stranko:</strong><br />
+            Vsaka stranka odpre <code>https://photographer.nikolakocev.com/deliver/</code> in vnese svoje geslo ali pa ji pošljete direktno povezavo s parametrom <code>?event=Ime</code>.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Photographer Nikola · Skrbniški portal
+  </footer>
+
+  <script>
+    // ── AUTHENTICATION ──
+    const loginSection = document.getElementById('loginSection');
+    const dashboardSection = document.getElementById('dashboardSection');
+    const loginForm = document.getElementById('loginForm');
+    const loginAlert = document.getElementById('loginAlert');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // Check if already authenticated
+    if (sessionStorage.getItem('nikola_admin_auth') === 'true') {
+      showDashboard();
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginAlert.style.display = 'none';
+      const username = document.getElementById('usernameInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+
+      const success = await checkCredentials(username, password);
+      if (success) {
+        sessionStorage.setItem('nikola_admin_auth', 'true');
+        sessionStorage.setItem('nikola_admin_user', username);
+        sessionStorage.setItem('nikola_admin_pass', password);
+        showDashboard();
+      } else {
+        loginAlert.textContent = 'Napačno uporabniško ime ali geslo.';
+        loginAlert.style.display = 'block';
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('nikola_admin_auth');
+      sessionStorage.removeItem('nikola_admin_user');
+      sessionStorage.removeItem('nikola_admin_pass');
+      loginSection.style.display = 'block';
+      dashboardSection.style.display = 'none';
+      logoutBtn.style.display = 'none';
+      document.getElementById('usernameInput').value = '';
+      document.getElementById('passwordInput').value = '';
+    });
+
+    function showDashboard() {
+      loginSection.style.display = 'none';
+      dashboardSection.style.display = 'block';
+      logoutBtn.style.display = 'inline-block';
+      loadEvents();
+    }
+
+    async function checkCredentials(user, pass) {
+      const paths = ['../admin_login', '/admin_login', '../admin_login.txt', '/admin_login.txt', 'admin_login'];
+      let content = null;
+
+      for (const p of paths) {
+        try {
+          const res = await fetch(p + '?t=' + Date.now());
+          if (res.ok) {
+            content = await res.text();
+            break;
+          }
+        } catch(e) {}
+      }
+
+      if (!content) {
+        // Fallback hardcoded credentials matching uploaded admin_login
+        if (user === 'Nikola_user' && pass === 'Password_123') return true;
+        loginAlert.textContent = 'Ne morem prebrati datoteke admin_login. Preverite nastavitve.';
+        loginAlert.style.display = 'block';
+        return false;
+      }
+
+      // Parse admin_login:
+      // Supports "username : password" on single line OR line 1 = user, line 2 = pass
+      const lines = content.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      for (const line of lines) {
+        if (line.includes(':')) {
+          const parts = line.split(':');
+          const u = parts[0].trim();
+          const p = parts.slice(1).join(':').trim();
+          if (u === user && p === pass) return true;
+        }
+      }
+      if (lines.length >= 2 && lines[0] === user && lines[1] === pass) {
+        return true;
+      }
+
+      return false;
+    }
+
+    // ── LOAD EXISTING EVENTS FROM deliver/events.txt ──
+    const eventsList = document.getElementById('eventsList');
+    const refreshEventsBtn = document.getElementById('refreshEventsBtn');
+    let loadedEvents = [];
+
+    async function loadEvents() {
+      eventsList.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">Nalagam galerije…</p>';
+      const paths = ['../deliver/events.txt', '/deliver/events.txt', '../deliver/events', '/deliver/events', 'deliver/events.txt'];
+      let text = null;
+
+      for (const p of paths) {
+        try {
+          const res = await fetch(p + '?t=' + Date.now());
+          if (res.ok) {
+            text = await res.text();
+            break;
+          }
+        } catch(e) {}
+      }
+
+      if (!text) {
+        eventsList.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">Trenutno ni zabeleženih galerij v <code>deliver/events.txt</code>.</p>';
+        return;
+      }
+
+      loadedEvents = [];
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      for (const line of lines) {
+        const parts = line.split(':');
+        if (parts.length >= 2) {
+          const name = parts[0].trim();
+          const pass = parts.slice(1).join(':').trim();
+          loadedEvents.push({ name, pass });
+        }
+      }
+
+      renderEvents();
+    }
+
+    function renderEvents() {
+      eventsList.innerHTML = '';
+      if (!loadedEvents.length) {
+        eventsList.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">Ni najdenih galerij v datoteki <code>deliver/events.txt</code>.</p>';
+        return;
+      }
+
+      loadedEvents.forEach(evt => {
+        const item = document.createElement('div');
+        item.className = 'event-item';
+        item.innerHTML = `
+          <div class="event-info">
+            <div class="event-name">${escapeHtml(evt.name)}</div>
+            <div class="event-pass">Geslo: <span id="pass-${escapeHtml(evt.name)}">••••••••</span> <button type="button" class="btn btn-secondary btn-sm" style="padding:0.1rem 0.4rem; font-size:0.65rem;" onclick="togglePass('${escapeHtml(evt.name)}', '${escapeHtml(evt.pass)}')">Prikaži</button></div>
+          </div>
+          <div class="event-actions">
+            <a href="../deliver/?event=${encodeURIComponent(evt.name)}" target="_blank" class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:0.3rem; text-decoration:none;">
+              Odpri
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+            <button type="button" class="btn btn-secondary btn-sm" style="padding:0.3rem 0.55rem; color:var(--danger); border-color:#f8b4b4; display:inline-flex; align-items:center;" onclick="deleteGallery('${escapeHtml(evt.name)}')" title="Izbriši galerijo in datoteke">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+          </div>
+        `;
+        eventsList.appendChild(item);
+      });
+    }
+
+    window.togglePass = function(name, pass) {
+      const span = document.getElementById('pass-' + name);
+      if (span.textContent === '••••••••') {
+        span.textContent = pass;
+      } else {
+        span.textContent = '••••••••';
+      }
+    };
+
+    window.deleteGallery = async function(name) {
+      if (!confirm(`Ali ste prepričani, da želite popolnoma izbrisati galerijo "${name}" skupaj z vsemi fotografijami na strežniku? Tega dejanja ni mogoče razveljaviti.`)) return;
+      const adminUser = sessionStorage.getItem('nikola_admin_user') || 'Nikola_user';
+      const adminPass = sessionStorage.getItem('nikola_admin_pass') || 'Password_123';
+
+      try {
+        const fd = new FormData();
+        fd.append('action', 'delete_event');
+        fd.append('adminUser', adminUser);
+        fd.append('adminPass', adminPass);
+        fd.append('eventName', name);
+
+        const res = await fetch('upload.php', { method: 'POST', body: fd });
+        const json = await res.json();
+        if (json.success) {
+          loadEvents();
+        } else {
+          alert('Napaka: ' + (json.error || 'Neuspešno brisanje.'));
+        }
+      } catch(e) {
+        alert('Napaka pri povezavi: ' + e.message);
+      }
+    };
+
+    refreshEventsBtn.addEventListener('click', loadEvents);
+
+    // ── CREATE GALLERY & PROCESS IMAGES ──
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const previewArea = document.getElementById('previewArea');
+    const previewGrid = document.getElementById('previewGrid');
+    const previewCount = document.getElementById('previewCount');
+    const genPassBtn = document.getElementById('genPassBtn');
+    const createAlert = document.getElementById('createAlert');
+    const uploadServerBtn = document.getElementById('uploadServerBtn');
+    const exportPackageBtn = document.getElementById('exportPackageBtn');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressText = document.getElementById('progressText');
+
+    let selectedFiles = [];
+
+    // Password generator
+    genPassBtn.addEventListener('click', () => {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+      let pass = '';
+      for (let i = 0; i < 8; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      document.getElementById('eventPassword').value = pass;
+    });
+
+    // Dropzone interaction
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files) handleFiles(Array.from(e.dataTransfer.files));
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files) handleFiles(Array.from(fileInput.files));
+    });
+
+    function handleFiles(files) {
+      const imageFiles = files.filter(f => f.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(f.name));
+      if (!imageFiles.length) return;
+
+      selectedFiles = imageFiles;
+      previewGrid.innerHTML = '';
+      previewCount.textContent = `Izbranih ${selectedFiles.length} fotografij`;
+      previewArea.style.display = 'block';
+
+      // Show small preview thumbnails
+      selectedFiles.slice(0, 30).forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        item.appendChild(img);
+        previewGrid.appendChild(item);
+      });
+      if (selectedFiles.length > 30) {
+        const more = document.createElement('div');
+        more.className = 'preview-item';
+        more.style.display = 'flex';
+        more.style.alignItems = 'center';
+        more.style.justifyContent = 'center';
+        more.style.fontSize = '0.75rem';
+        more.style.color = 'var(--muted)';
+        more.textContent = `+${selectedFiles.length - 30}`;
+        previewGrid.appendChild(more);
+      }
+    }
+
+    function getThumbSettings() {
+      const select = document.getElementById('thumbQuality');
+      const val = select ? select.value : 'high';
+      if (val === 'max') {
+        return { maxDimension: 2000, quality: 0.88 };
+      } else if (val === 'balanced') {
+        return { maxDimension: 1200, quality: 0.78 };
+      }
+      return { maxDimension: 1600, quality: 0.82 };
+    }
+
+    // Canvas image compression for thumbnails (high quality ~200-350KB for crisp display without heavy payload)
+    async function generateThumbnail(file, maxDimension = 1600, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          let w = img.naturalWidth;
+          let h = img.naturalHeight;
+
+          if (w > maxDimension || h > maxDimension) {
+            if (w > h) {
+              h = Math.round((h * maxDimension) / w);
+              w = maxDimension;
+            } else {
+              w = Math.round((w * maxDimension) / h);
+              h = maxDimension;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, w, h);
+
+          canvas.toBlob((blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('Canvas blob generation failed'));
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
+
+    function getThumbnailName(originalName) {
+      const dotIndex = originalName.lastIndexOf('.');
+      const base = dotIndex !== -1 ? originalName.slice(0, dotIndex) : originalName;
+      return base + '_thumbnail.jpg';
+    }
+
+    // ── UPLOAD GALLERY DIRECTLY TO SERVER VIA upload.php ──
+    uploadServerBtn.addEventListener('click', async () => {
+      const eventName = document.getElementById('eventName').value.trim();
+      const eventPassword = document.getElementById('eventPassword').value.trim();
+      const adminUser = sessionStorage.getItem('nikola_admin_user') || 'Nikola_user';
+      const adminPass = sessionStorage.getItem('nikola_admin_pass') || 'Password_123';
+
+      if (!eventName) { alert('Prosimo, vnesite ime dogodka / stranke.'); return; }
+      if (!eventPassword) { alert('Prosimo, vnesite geslo za stranko.'); return; }
+      if (!selectedFiles.length) { alert('Prosimo, izberite vsaj eno fotografijo.'); return; }
+
+      createAlert.style.display = 'none';
+      progressWrap.style.display = 'block';
+      progressBarFill.style.width = '0%';
+      progressText.textContent = 'Pripravljam galerijo na strežniku…';
+      uploadServerBtn.disabled = true;
+
+      try {
+        const authQuery = `u=${encodeURIComponent(adminUser)}&p=${encodeURIComponent(adminPass)}`;
+        const authHeaders = {
+          'X-Admin-User': adminUser,
+          'X-Admin-Pass': adminPass
+        };
+
+        // Step 1: Init gallery on server
+        const initData = new FormData();
+        initData.append('action', 'init');
+        initData.append('adminUser', adminUser);
+        initData.append('adminPass', adminPass);
+        initData.append('eventName', eventName);
+        initData.append('eventPassword', eventPassword);
+
+        const initRes = await fetch(`upload.php?${authQuery}`, { method: 'POST', headers: authHeaders, body: initData });
+        if (!initRes.ok) {
+          const errText = await initRes.text();
+          throw new Error('Strežnik je vrnil napako (' + initRes.status + '): ' + errText);
+        }
+        const initJson = await initRes.json();
+        if (!initJson.success) {
+          throw new Error(initJson.error || 'Napaka pri inicializaciji galerije na strežniku.');
+        }
+
+        const cleanName = initJson.eventName || eventName;
+        const total = selectedFiles.length;
+        const manifestFiles = [];
+        const thumbSettings = getThumbSettings();
+
+        // Step 2: Process thumbnails & upload each photo sequentially
+        for (let i = 0; i < total; i++) {
+          const file = selectedFiles[i];
+          progressText.textContent = `Nalagam fotografijo ${i + 1} / ${total}: ${file.name}`;
+          progressBarFill.style.width = `${Math.round((i / total) * 100)}%`;
+
+          // Generate compressed thumbnail via Canvas
+          const thumbBlob = await generateThumbnail(file, thumbSettings.maxDimension, thumbSettings.quality);
+
+          const upData = new FormData();
+          upData.append('action', 'upload_file');
+          upData.append('adminUser', adminUser);
+          upData.append('adminPass', adminPass);
+          upData.append('eventName', cleanName);
+          upData.append('file', file, file.name);
+          upData.append('thumbnail', thumbBlob, getThumbnailName(file.name));
+
+          const upRes = await fetch(`upload.php?${authQuery}`, { method: 'POST', headers: authHeaders, body: upData });
+          if (!upRes.ok) {
+            const errText = await upRes.text();
+            throw new Error(`Napaka pri prenosu ${file.name} (${upRes.status}): ${errText}`);
+          }
+          const upJson = await upRes.json();
+          if (!upJson.success) {
+            throw new Error(upJson.error || `Napaka pri nalaganju fotografije: ${file.name}`);
+          }
+
+          manifestFiles.push(upJson.filename || file.name);
+          progressBarFill.style.width = `${Math.round(((i + 1) / total) * 100)}%`;
+        }
+
+        // Step 3: Finalize manifest.json
+        progressText.textContent = 'Zaključujem manifest.json na strežniku…';
+        const finData = new FormData();
+        finData.append('action', 'finalize');
+        finData.append('adminUser', adminUser);
+        finData.append('adminPass', adminPass);
+        finData.append('eventName', cleanName);
+        finData.append('files', JSON.stringify(manifestFiles));
+
+        const finRes = await fetch(`upload.php?${authQuery}`, { method: 'POST', headers: authHeaders, body: finData });
+        const finJson = await finRes.json();
+        if (!finJson.success) {
+          throw new Error(finJson.error || 'Napaka pri zaključevanju manifest.json na strežniku.');
+        }
+
+        progressText.textContent = 'Končano 100%!';
+        progressBarFill.style.width = '100%';
+
+        createAlert.className = 'alert-box alert-success';
+        createAlert.innerHTML = `<strong>Uspešno shranjeno!</strong> Galerija <strong>${escapeHtml(cleanName)}</strong> (${total} fotografij) je bila shranjena na strežnik.<br/>
+          Povezava za stranko: <a href="../deliver/?event=${encodeURIComponent(cleanName)}" target="_blank" style="color:inherit; font-weight:500; text-decoration:underline;">Odpri galerijo</a> (Geslo: <code>${escapeHtml(eventPassword)}</code>)`;
+        createAlert.style.display = 'block';
+
+        // Clear form
+        document.getElementById('eventName').value = '';
+        document.getElementById('eventPassword').value = '';
+        selectedFiles = [];
+        previewArea.style.display = 'none';
+        fileInput.value = '';
+
+        loadEvents();
+      } catch(err) {
+        console.error(err);
+        createAlert.className = 'alert-box alert-error';
+        createAlert.textContent = 'Napaka pri nalaganju na strežnik: ' + err.message;
+        createAlert.style.display = 'block';
+      } finally {
+        uploadServerBtn.disabled = false;
+      }
+    });
+
+    // ── METHOD 2: EXPORT MANIFEST & THUMBNAILS PACKAGE ──
+    exportPackageBtn.addEventListener('click', async () => {
+      const eventName = document.getElementById('eventName').value.trim();
+      const eventPassword = document.getElementById('eventPassword').value.trim();
+
+      if (!eventName) { alert('Prosimo, vnesite ime dogodka / stranke.'); return; }
+      if (!selectedFiles.length) { alert('Prosimo, izberite vsaj eno fotografijo.'); return; }
+
+      progressWrap.style.display = 'block';
+      progressBarFill.style.width = '0%';
+
+      const manifestFiles = selectedFiles.map(f => f.name);
+      const thumbSettings = getThumbSettings();
+
+      // Download manifest.json
+      const manifestBlob = new Blob([JSON.stringify(manifestFiles, null, 2)], { type: 'application/json' });
+      downloadBlob(manifestBlob, 'manifest.json');
+
+      // Sequential download of generated thumbnails
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        progressText.textContent = `Prenašam sličico ${i + 1} / ${selectedFiles.length}`;
+        progressBarFill.style.width = `${Math.round(((i + 1) / selectedFiles.length) * 100)}%`;
+
+        const thumbBlob = await generateThumbnail(file, thumbSettings.maxDimension, thumbSettings.quality);
+        downloadBlob(thumbBlob, getThumbnailName(file.name));
+        await new Promise(r => setTimeout(r, 200)); // small stagger
+      }
+
+      progressText.textContent = 'Vse sličice in manifest so preneseni!';
+      createAlert.className = 'alert-box alert-success';
+      createAlert.innerHTML = `Prenesli ste <code>manifest.json</code> in vse sličice. Premaknite jih v mapo <code>deliver/${escapeHtml(eventName)}/</code> skupaj z originali ter v <code>deliver/events.txt</code> dodajte vrstico:<br/><code>${escapeHtml(eventName)} : ${escapeHtml(eventPassword)}</code>`;
+      createAlert.style.display = 'block';
+    });
+
+    function downloadBlob(blob, filename) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      }, 100);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>

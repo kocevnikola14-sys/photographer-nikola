@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dostava Galerij — Photographer Nikola</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f0ede7;
+      --ink: #1c1c1c;
+      --accent: #3d6b4f;
+      --accent2: #7aab8a;
+      --muted: #888078;
+      --white: #faf9f6;
+      --card-bg: #ffffff;
+      --border: rgba(28,28,28,0.12);
+      --danger: #b9423b;
+      --success: #2e7d32;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(240,237,231,0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 1.1rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 1rem;
+    }
+    .header-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .header-nav a {
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .header-nav a:hover {
+      opacity: 1;
+      color: var(--accent);
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 0.3rem;
+    }
+    .lang-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.28rem 0.6rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .lang-btn.active { color: var(--white); background: var(--accent); border-color: var(--accent); }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 3rem 4rem 6rem;
+    }
+
+    /* LOGIN / PASSWORD GATE */
+    #gateSection {
+      max-width: 460px;
+      margin: 5rem auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.04);
+      text-align: center;
+    }
+    .gate-kicker {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    .gate-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      margin-bottom: 0.8rem;
+    }
+    .gate-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .gate-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 2.2rem;
+      line-height: 1.6;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(61,107,79,0.15);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.85rem 1.6rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: #2f543d; }
+    .btn-block { width: 100%; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(0,0,0,0.04);
+      border-color: var(--ink);
+    }
+    .btn-sm {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.72rem;
+    }
+    .alert-box {
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      margin-bottom: 1.2rem;
+      display: none;
+      text-align: left;
+    }
+    .alert-error {
+      background: #fde8e8;
+      color: var(--danger);
+      border: 1px solid #f8b4b4;
+    }
+
+    /* GALLERY VIEW */
+    #gallerySection {
+      display: none;
+    }
+    .gallery-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding-bottom: 1.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .event-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 400;
+      line-height: 1.1;
+    }
+    .event-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .event-meta {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ACTION TOOLBAR */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.9rem 1.4rem;
+      margin-bottom: 2.2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: sticky;
+      top: 5rem;
+      z-index: 40;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    .selection-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.82rem;
+    }
+    .selection-badge {
+      font-weight: 500;
+      color: var(--accent);
+      background: rgba(61,107,79,0.08);
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+    }
+    .download-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    /* PHOTO GRID / JUSTIFIED ROWS */
+    .photo-grid {
+      width: 100%;
+    }
+    .photo-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .photo-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 6px;
+      background: #e6e2dc;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform 0.25s, box-shadow 0.25s;
+      flex-shrink: 0;
+    }
+    .photo-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease, filter 0.35s;
+      filter: saturate(0.92);
+    }
+    .photo-card:hover img {
+      transform: scale(1.02);
+      filter: saturate(1);
+    }
+    .photo-card.selected {
+      outline: 3px solid var(--accent);
+      outline-offset: -3px;
+    }
+    /* Checkbox overlay */
+    .photo-check {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.88);
+      border: 1.5px solid rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      transition: all 0.2s;
+    }
+    .photo-card.selected .photo-check {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .photo-check svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      display: none;
+    }
+    .photo-card.selected .photo-check svg {
+      display: block;
+    }
+
+    /* Bottom quick action on card */
+    .card-actions {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.8rem 1rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .photo-card:hover .card-actions {
+      opacity: 1;
+    }
+    .card-filename {
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 400;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 65%;
+    }
+    .card-download-icon {
+      color: #fff;
+      cursor: pointer;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .card-download-icon:hover {
+      background: var(--accent);
+    }
+
+    /* LIGHTBOX */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      background: rgba(12,12,12,0.96);
+    }
+    #lightbox.active { display: flex; animation: lbIn 0.25s ease forwards; }
+    #lightbox-img-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 90vw;
+      max-height: 86vh;
+    }
+    #lightbox img {
+      max-width: 88vw;
+      max-height: 84vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 20px 70px rgba(0,0,0,0.8);
+    }
+    #lb-close {
+      position: absolute; top: 1.5rem; right: 2rem;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; font-size: 1.1rem; cursor: pointer; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    #lb-close:hover { background: rgba(255,255,255,0.25); }
+    .lb-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; font-size: 1.3rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; z-index: 10;
+    }
+    .lb-arrow:hover { background: rgba(255,255,255,0.25); }
+    #lb-prev { left: -3.8rem; }
+    #lb-next { right: -3.8rem; }
+    #lb-toolbar {
+      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 1.2rem;
+      background: rgba(20,20,20,0.85); padding: 0.6rem 1.4rem;
+      border-radius: 30px; border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+    }
+    #lb-counter {
+      font-size: 0.75rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.6);
+      white-space: nowrap;
+    }
+    .lb-btn {
+      background: none; border: none; color: #fff; cursor: pointer;
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      font-family: inherit; display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.3rem 0.6rem; border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .lb-btn:hover { background: rgba(255,255,255,0.15); }
+    @media (max-width: 768px) {
+      #lb-prev { left: 0.5rem; } #lb-next { right: 0.5rem; }
+      #lightbox img { max-width: 95vw; max-height: 75vh; }
+      #lb-close { top: 1rem; right: 1rem; }
+      #lb-toolbar { bottom: 1rem; width: 90%; justify-content: space-around; }
+      header { padding: 0.9rem 1.2rem; }
+      .header-logo { font-size: 1.05rem; }
+      .header-nav { gap: 0.8rem; }
+      main { padding: 2rem 1.2rem 4rem; }
+      .action-bar { top: 3.8rem; padding: 0.8rem 1rem; }
+    }
+    @media (max-width: 600px) {
+      .photo-row {
+        display: block !important;
+        margin-bottom: 0.75rem;
+      }
+      .photo-card {
+        width: 100% !important;
+        height: auto !important;
+        margin-bottom: 0.75rem;
+      }
+      .photo-card img {
+        width: 100% !important;
+        height: auto !important;
+        display: block;
+      }
+    }
+    @keyframes lbIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* PROGRESS MODAL */
+    #progressModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 600;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+    }
+    .progress-box {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 2.2rem 2.5rem;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    }
+    .progress-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.6rem;
+    }
+    .progress-msg {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .p-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #e6e2dc;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 0.8rem;
+    }
+    .p-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.15s ease;
+    }
+    .p-percentage {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+    /* IN-APP BROWSER (ANDROID INSTAGRAM/FACEBOOK) BANNER & MODAL */
+    .iab-banner {
+      background: #233b2c;
+      color: #faf9f6;
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 101;
+    }
+    .iab-banner-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .iab-banner-icon {
+      display: inline-flex;
+      align-items: center;
+      color: #9cd1ab;
+    }
+    .iab-banner-text {
+      line-height: 1.4;
+      font-weight: 400;
+    }
+    .iab-banner-btn {
+      background: #faf9f6;
+      color: #1c2b22;
+      border-radius: 20px;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .iab-banner-btn:active {
+      transform: scale(0.97);
+    }
+    .iab-banner-close {
+      background: none;
+      border: none;
+      color: #faf9f6;
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0.75;
+      padding: 0 0.3rem;
+      transition: opacity 0.2s;
+    }
+    .iab-banner-close:hover {
+      opacity: 1;
+    }
+
+    .iab-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 24, 20, 0.75);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+    .iab-modal-box {
+      background: #ffffff;
+      border-radius: 12px;
+      max-width: 440px;
+      width: 100%;
+      padding: 2.2rem 1.8rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      text-align: center;
+      position: relative;
+    }
+    .iab-modal-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 1.2rem;
+      background: #edf5ef;
+      color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .iab-modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.45rem;
+      color: var(--ink);
+      margin-bottom: 0.75rem;
+      line-height: 1.25;
+    }
+    .iab-modal-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 1.5rem;
+    }
+    .iab-modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+    }
+    .iab-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      background: var(--accent);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 0.85rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.92rem;
+      transition: background 0.2s, transform 0.1s;
+      border: none;
+      box-sizing: border-box;
+    }
+    .iab-btn-primary:active {
+      transform: scale(0.98);
+      background: #325841;
+    }
+    .iab-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      background: #f7f6f4;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      padding: 0.75rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.86rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-sizing: border-box;
+    }
+    .iab-btn-secondary:active {
+      background: #ece8e1;
+    }
+    .iab-modal-hint {
+      font-size: 0.76rem;
+      color: #888;
+      line-height: 1.45;
+      margin-bottom: 1.2rem;
+      background: #faf9f6;
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      border: 1px dashed var(--border);
+    }
+    .iab-btn-dismiss {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0.3rem 0.6rem;
+    }
+    .iab-btn-dismiss:hover {
+      color: var(--ink);
+    }
+
+    @media (max-width: 600px) {
+      .iab-banner {
+        padding: 0.6rem 1rem;
+        font-size: 0.76rem;
+      }
+      .iab-banner-btn {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.72rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- IN-APP BROWSER (INSTAGRAM / FACEBOOK) BANNER FOR ANDROID -->
+  <div id="iabBanner" class="iab-banner" style="display: none;">
+    <div class="iab-banner-content">
+      <span class="iab-banner-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </span>
+      <span class="iab-banner-text" data-i18n="iabBannerText">Za neposredno shranjevanje fotografij v galerijo telefona odprite v brskalniku Chrome.</span>
+      <a href="#" id="iabBannerBtn" class="iab-banner-btn" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>
+        <span data-i18n="iabBannerBtn">Odpri v Chrome</span>
+      </a>
+    </div>
+    <button type="button" id="iabBannerClose" class="iab-banner-close" aria-label="Zapri">&times;</button>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <a href="../" class="header-logo">Photographer Nikola</a>
+    <div class="header-nav">
+      <a href="../" data-i18n="navHome">← Domov</a>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="sl">SL</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="mk">MK</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. PASSWORD ACCESS GATE -->
+    <section id="gateSection">
+      <p class="gate-kicker" data-i18n="gateKicker">Zasebna Galerija</p>
+      <h1 class="gate-title" data-i18n="gateTitle">Dostop do <em>Fotografij</em></h1>
+      <p class="gate-desc" data-i18n="gateDesc">Vnesite geslo, ki ste ga prejeli od fotografa, za ogled in prenos vaše galerije v polni ločljivosti.</p>
+
+      <div id="gateAlert" class="alert-box alert-error"></div>
+
+      <form id="gateForm" onsubmit="return false;">
+        <div class="form-group">
+          <label class="form-label" for="galleryPassword" data-i18n="lblPass">Geslo galerije</label>
+          <input type="password" id="galleryPassword" class="form-input" placeholder="••••••••" required autofocus />
+        </div>
+        <button type="submit" class="btn btn-block" id="unlockBtn" data-i18n="btnUnlock">Odpri Galerijo</button>
+      </form>
+    </section>
+
+    <!-- 2. GALLERY VIEW -->
+    <section id="gallerySection">
+      <div class="gallery-top">
+        <div>
+          <h1 class="event-title" id="eventTitle">Galerija <em></em></h1>
+          <p class="event-meta" id="eventMeta">Nalagam fotografije…</p>
+        </div>
+        <div>
+          <button type="button" class="btn btn-secondary btn-sm" id="lockBtn" data-i18n="btnLock">Zapri Galerijo</button>
+        </div>
+      </div>
+
+      <!-- ACTION TOOLBAR -->
+      <div class="action-bar">
+        <div class="selection-controls">
+          <button type="button" class="btn btn-secondary btn-sm" id="selectAllBtn" data-i18n="btnSelectAll">Izberi vse</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="deselectAllBtn" data-i18n="btnDeselect">Počisti izbiro</button>
+          <span class="selection-badge" id="selectionBadge">0 izbranih</span>
+        </div>
+
+        <div class="download-actions">
+          <!-- Computer / Laptop: Direct JPG (1 photo) or ZIP (>1 photos) -->
+          <button type="button" class="btn btn-sm" id="downloadFolderBtn" title="Prenesi fotografije (ZIP ali JPG)" style="display:inline-flex; align-items:center; gap:0.45rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><polyline points="12 11 12 17 9 14"></polyline><polyline points="12 17 15 14"></polyline></svg>
+            <span data-i18n="btnSavePc">Prenesi (Računalnik/prenosnik)</span>
+          </button>
+
+          <!-- Mobile / Phone: Direct Camera Roll save unzipped via Web Share API -->
+          <button type="button" class="btn btn-sm" id="saveCameraRollBtn" title="Shrani v Camera Roll / Galerijo telefona" style="display:inline-flex; align-items:center; gap:0.45rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            <span data-i18n="btnSavePhone">Camera Roll (Telefon)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PHOTO GRID -->
+      <div class="photo-grid" id="photoGrid"></div>
+    </section>
+  </main>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox">
+    <button id="lb-close" title="Zapri (Esc)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <div id="lightbox-img-wrap">
+      <button class="lb-arrow" id="lb-prev" title="Prejšnja">&#8592;</button>
+      <img id="lb-img" src="" alt="" />
+      <button class="lb-arrow" id="lb-next" title="Naslednja">&#8594;</button>
+    </div>
+    <div id="lb-toolbar">
+      <div id="lb-counter">1 / 1</div>
+      <button type="button" class="lb-btn" id="lb-select-toggle" style="display:inline-flex; align-items:center; gap:0.4rem;">
+        <span id="lb-select-icon" style="display:inline-flex; align-items:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+        </span>
+        <span id="lb-select-text" data-i18n="lbSelect">Izberi</span>
+      </button>
+      <button type="button" class="lb-btn" id="lb-download" style="display:inline-flex; align-items:center; gap:0.4rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span data-i18n="lbDownload">Prenesi polno ločljivost</span>
+      </button>
+      <button type="button" class="lb-btn" id="lb-share" style="display:none; align-items:center; gap:0.4rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        <span data-i18n="lbShare">V telefon</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PROGRESS MODAL -->
+  <div id="progressModal">
+    <div class="progress-box">
+      <h3 class="progress-title" id="progressTitle" data-i18n="pTitle">Prenašam fotografije</h3>
+      <p class="progress-msg" id="progressMsg">Pripravljam fotografije v polni ločljivosti…</p>
+      <div class="p-bar-bg">
+        <div class="p-bar-fill" id="pBarFill"></div>
+      </div>
+      <p class="p-percentage" id="pPercentage">0%</p>
+    </div>
+  </div>
+
+  <!-- IN-APP BROWSER (INSTAGRAM / FACEBOOK) MODAL FOR ANDROID -->
+  <div id="iabModal" class="iab-modal-backdrop" style="display: none;">
+    <div class="iab-modal-box">
+      <div class="iab-modal-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="4"></circle>
+          <line x1="21.17" y1="8" x2="12" y2="8"></line>
+          <line x1="3.95" y1="6.06" x2="8.54" y2="14"></line>
+          <line x1="10.88" y1="21.94" x2="15.46" y2="14"></line>
+        </svg>
+      </div>
+      <h3 class="iab-modal-title" data-i18n="iabModalTitle">Odprite v brskalniku Chrome</h3>
+      <p class="iab-modal-desc" data-i18n="iabModalDesc">Instagram in Facebook onemogočata neposreden prenos fotografij v pomnilnik telefona. Za prenos vseh fotografij v vašo galerijo (Camera Roll) odprite stran v brskalniku Chrome.</p>
+
+      <div class="iab-modal-actions">
+        <a href="#" id="iabModalOpenBtn" class="iab-btn-primary" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>
+          <span data-i18n="iabModalBtn">Odpri v Chrome</span>
+        </a>
+        <button type="button" id="iabModalCopyBtn" class="iab-btn-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span id="iabModalCopyText" data-i18n="iabCopyBtn">Kopiraj povezavo</span>
+        </button>
+      </div>
+
+      <p class="iab-modal-hint" data-i18n="iabModalHint">Namig: Lahko tudi kliknete ⋯ (tri pike) zgoraj desno v aplikaciji in izberete »Odpri v zunanjem brskalniku«.</p>
+
+      <button type="button" id="iabModalCloseBtn" class="iab-btn-dismiss" data-i18n="iabDismiss">Zapri</button>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2026 Photographer Nikola · <span data-i18n="footerRights">Vse pravice pridržane</span>
+  </footer>
+
+  <script>
+    // ── TRANSLATIONS ──
+    const T = {
+      sl: {
+        navHome: "← Domov",
+        gateKicker: "Zasebna Galerija",
+        gateTitle: "Dostop do <em>Fotografij</em>",
+        gateDesc: "Vnesite geslo, ki ste ga prejeli od fotografa, za ogled in prenos vaše galerije v polni ločljivosti.",
+        lblPass: "Geslo galerije",
+        btnUnlock: "Odpri Galerijo",
+        btnLock: "Zapri Galerijo",
+        btnSelectAll: "Izberi vse",
+        btnDeselect: "Počisti izbiro",
+        btnSavePc: "Prenesi (Računalnik/prenosnik)",
+        btnSavePhone: "Camera Roll (Telefon)",
+        lbSelect: "Izberi",
+        lbSelected: "Izbrana",
+        lbDownload: "Prenesi polno ločljivost",
+        lbShare: "V telefon",
+        pTitle: "Prenašam fotografije",
+        footerRights: "Vse pravice pridržane",
+        selectedOf: "izbranih",
+        allPhotos: "fotografij v polni ločljivosti",
+        errWrongPass: "Napačno geslo. Preverite vnos in poskusite ponovno.",
+        errLoadEvents: "Napaka pri prebiranju gesel. Obrnite se na fotografa.",
+        errNoPhotos: "V tej galeriji še ni objavljenih fotografij.",
+        promptSelect: "Najprej izberite fotografije ali pa prenesite celotno galerijo.",
+        savePcSuccess: "Fotografije so uspešno pripravljene in prenesene!",
+        savePhoneSuccess: "Fotografije so pripravljene za shranjevanje v vašo galerijo!",
+        iabBannerText: "Za neposredno shranjevanje fotografij v galerijo telefona odprite v brskalniku Chrome.",
+        iabBannerBtn: "Odpri v Chrome",
+        iabModalTitle: "Odprite v brskalniku Chrome",
+        iabModalDesc: "Instagram in Facebook onemogočata neposreden prenos fotografij v pomnilnik telefona. Za prenos vseh fotografij v vašo galerijo (Camera Roll) odprite stran v brskalniku Chrome.",
+        iabModalBtn: "Odpri v Chrome",
+        iabCopyBtn: "Kopiraj povezavo",
+        iabCopied: "Povezava kopirana!",
+        iabModalHint: "Namig: Lahko tudi kliknete ⋯ (tri pike) zgoraj desno v aplikaciji in izberete »Odpri v zunanjem brskalniku«.",
+        iabDismiss: "Zapri",
+      },
+      en: {
+        navHome: "← Home",
+        gateKicker: "Private Client Gallery",
+        gateTitle: "Access Your <em>Photos</em>",
+        gateDesc: "Enter the password you received from the photographer to view and download your full-resolution gallery.",
+        lblPass: "Gallery Password",
+        btnUnlock: "Open Gallery",
+        btnLock: "Close Gallery",
+        btnSelectAll: "Select All",
+        btnDeselect: "Deselect",
+        btnSavePc: "Download (Computer/laptop)",
+        btnSavePhone: "Camera Roll (Phone)",
+        lbSelect: "Select",
+        lbSelected: "Selected",
+        lbDownload: "Download Full Res",
+        lbShare: "Save to Phone",
+        pTitle: "Downloading Photos",
+        footerRights: "All rights reserved",
+        selectedOf: "selected",
+        allPhotos: "photos in full resolution",
+        errWrongPass: "Incorrect password. Please check and try again.",
+        errLoadEvents: "Unable to load events list. Please contact the photographer.",
+        errNoPhotos: "No photos published in this gallery yet.",
+        promptSelect: "Please select photos first or download the entire gallery.",
+        savePcSuccess: "Photos prepared and downloaded successfully!",
+        savePhoneSuccess: "Photos ready to save directly to your camera roll!",
+        iabBannerText: "To save photos directly to your camera roll, please open in Chrome.",
+        iabBannerBtn: "Open in Chrome",
+        iabModalTitle: "Open in Google Chrome",
+        iabModalDesc: "Instagram and Facebook block direct photo downloads to phone storage. To save photos directly into your camera roll / gallery, please open this page in Chrome.",
+        iabModalBtn: "Open in Chrome",
+        iabCopyBtn: "Copy Link",
+        iabCopied: "Link Copied!",
+        iabModalHint: "Tip: You can also tap ⋯ (three dots) in the top-right corner of the app and choose 'Open in external browser'.",
+        iabDismiss: "Close",
+      },
+      mk: {
+        navHome: "← Дома",
+        gateKicker: "Приватна Галерија",
+        gateTitle: "Пристап до <em>Фотографиите</em>",
+        gateDesc: "Внесете ја лозинката што ја добивте од фотографот за да ја прегледате и преземете вашата галерија во полна резолуција.",
+        lblPass: "Лозинка на галерија",
+        btnUnlock: "Отвори Галерија",
+        btnLock: "Затвори Галерија",
+        btnSelectAll: "Избери ги сите",
+        btnDeselect: "Исчисти избор",
+        btnSavePc: "Преземи (Компјутер/лаптоп)",
+        btnSavePhone: "Camera Roll (Телефон)",
+        lbSelect: "Избери",
+        lbSelected: "Избрана",
+        lbDownload: "Преземи полна резолуција",
+        lbShare: "Во телефон",
+        pTitle: "Преземам фотографии",
+        footerRights: "Сите права се задржани",
+        selectedOf: "избрани",
+        allPhotos: "фотографии во полна резолуција",
+        errWrongPass: "Погрешна лозинка. Проверете и обидете се повторно.",
+        errLoadEvents: "Грешка при вчитување на лозинките. Контактирајте го фотографот.",
+        errNoPhotos: "Сè уште нема објавено фотографии во оваа галерија.",
+        promptSelect: "Прво изберете фотографии или преземете ја целата галерија.",
+        savePcSuccess: "Фотографиите се успешно подготвени и преземени!",
+        savePhoneSuccess: "Фотографиите се подготвени за снимање во телефонот!",
+        iabBannerText: "За директно снимање во галеријата на телефонот, отворете во Chrome.",
+        iabBannerBtn: "Отвори во Chrome",
+        iabModalTitle: "Отворете во Google Chrome",
+        iabModalDesc: "Instagram и Facebook го оневозможуваат директното преземање фотографии во меморијата на телефонот. За преземање во вашата галерија (Camera Roll), отворете во Chrome.",
+        iabModalBtn: "Отвори во Chrome",
+        iabCopyBtn: "Копирај линк",
+        iabCopied: "Линкот е копиран!",
+        iabModalHint: "Совет: Можете исто така да кликнете ⋯ (три точки) горе десно во апликацијата и да изберете „Отвори во надворешен прелистувач“.",
+        iabDismiss: "Затвори",
+      }
+    };
+
+    // ── STATE & DOM ELEMENTS ──
+    let activeEvent = null;
+    let galleryPhotos = []; // array of { full: string, thumb: string, filename: string }
+    const selectedIndices = new Set();
+    let lbCurrentIndex = 0;
+
+    const gateSection = document.getElementById('gateSection');
+    const gallerySection = document.getElementById('gallerySection');
+    const gateForm = document.getElementById('gateForm');
+    const unlockBtn = document.getElementById('unlockBtn');
+    const gateAlert = document.getElementById('gateAlert');
+    const eventTitle = document.getElementById('eventTitle');
+    const eventMeta = document.getElementById('eventMeta');
+    const photoGrid = document.getElementById('photoGrid');
+    const selectionBadge = document.getElementById('selectionBadge');
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const deselectAllBtn = document.getElementById('deselectAllBtn');
+    const lockBtn = document.getElementById('lockBtn');
+
+    // Progress Modal elements
+    const progressModal = document.getElementById('progressModal');
+    const progressMsg = document.getElementById('progressMsg');
+    const pBarFill = document.getElementById('pBarFill');
+    const pPercentage = document.getElementById('pPercentage');
+
+    // Lightbox elements
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    const lbClose = document.getElementById('lb-close');
+    const lbPrev = document.getElementById('lb-prev');
+    const lbNext = document.getElementById('lb-next');
+    const lbCounter = document.getElementById('lb-counter');
+    const lbSelectToggle = document.getElementById('lb-select-toggle');
+    const lbDownload = document.getElementById('lb-download');
+    const lbShare = document.getElementById('lb-share');
+
+    // Detect mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (isMobile && lbShare) {
+      lbShare.style.display = 'flex';
+    }
+
+    // ── ANDROID IN-APP BROWSER (INSTAGRAM / FACEBOOK / MESSENGER) BRIDGE ──
+    let currentPass = '';
+
+    function isAndroidInAppBrowser() {
+      const ua = (navigator.userAgent || '').toLowerCase();
+      if (!ua.includes('android')) return false;
+      return ua.includes('instagram') ||
+             ua.includes('fban') ||
+             ua.includes('fbav') ||
+             ua.includes('fb_iab') ||
+             ua.includes('fb4a') ||
+             ua.includes('messenger') ||
+             ua.includes('tiktok') ||
+             ua.includes('musical_ly') ||
+             ua.includes('twitter') ||
+             ua.includes('snapchat') ||
+             ua.includes('threads') ||
+             ua.includes('line/') ||
+             ua.includes('micromessenger') ||
+             ua.includes('; wv') ||
+             (ua.includes('version/') && ua.includes('chrome/'));
+    }
+
+    function getAndroidChromeIntentUrl() {
+      const fullUrl = new URL(window.location.href);
+      if (activeEvent) {
+        fullUrl.searchParams.set('event', activeEvent);
+      }
+      if (currentPass) {
+        fullUrl.searchParams.set('pass', currentPass);
+      }
+      const cleanTarget = fullUrl.host + fullUrl.pathname + fullUrl.search + fullUrl.hash;
+      const fallbackUrl = encodeURIComponent(fullUrl.href);
+      return `intent://${cleanTarget}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${fallbackUrl};end`;
+    }
+
+    function getShareableGalleryUrl() {
+      const fullUrl = new URL(window.location.href);
+      if (activeEvent) {
+        fullUrl.searchParams.set('event', activeEvent);
+      }
+      if (currentPass) {
+        fullUrl.searchParams.set('pass', currentPass);
+      }
+      return fullUrl.href;
+    }
+
+    function refreshIabIntentLinks() {
+      const intentUrl = getAndroidChromeIntentUrl();
+      const bannerBtn = document.getElementById('iabBannerBtn');
+      const modalOpenBtn = document.getElementById('iabModalOpenBtn');
+      if (bannerBtn) bannerBtn.href = intentUrl;
+      if (modalOpenBtn) modalOpenBtn.href = intentUrl;
+    }
+
+    function openInAndroidChrome() {
+      refreshIabIntentLinks();
+      const intentUrl = getAndroidChromeIntentUrl();
+      try {
+        window.location.href = intentUrl;
+      } catch(e) {
+        console.error('Intent navigation failed', e);
+      }
+    }
+
+    function showIabModal() {
+      refreshIabIntentLinks();
+      const modal = document.getElementById('iabModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function hideIabModal() {
+      const modal = document.getElementById('iabModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    const iabBannerClose = document.getElementById('iabBannerClose');
+    if (iabBannerClose) {
+      iabBannerClose.addEventListener('click', () => {
+        const banner = document.getElementById('iabBanner');
+        if (banner) banner.style.display = 'none';
+        sessionStorage.setItem('nikola_iab_banner_dismissed', '1');
+      });
+    }
+
+    const iabModalCloseBtn = document.getElementById('iabModalCloseBtn');
+    if (iabModalCloseBtn) {
+      iabModalCloseBtn.addEventListener('click', hideIabModal);
+    }
+
+    const iabModalBackdrop = document.getElementById('iabModal');
+    if (iabModalBackdrop) {
+      iabModalBackdrop.addEventListener('click', (e) => {
+        if (e.target === iabModalBackdrop) hideIabModal();
+      });
+    }
+
+    const iabModalCopyBtn = document.getElementById('iabModalCopyBtn');
+    const iabModalCopyText = document.getElementById('iabModalCopyText');
+    if (iabModalCopyBtn) {
+      iabModalCopyBtn.addEventListener('click', async () => {
+        const fullUrl = getShareableGalleryUrl();
+        const dict = T[lang] || T.sl;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(fullUrl);
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = fullUrl;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          if (iabModalCopyText) {
+            iabModalCopyText.textContent = dict.iabCopied || 'Povezava kopirana!';
+            setTimeout(() => {
+              iabModalCopyText.textContent = dict.iabCopyBtn || 'Kopiraj povezavo';
+            }, 3000);
+          }
+        } catch(err) {
+          prompt(dict.iabCopyBtn || 'Kopirajte povezavo:', fullUrl);
+        }
+      });
+    }
+
+    if (isAndroid && isAndroidInAppBrowser()) {
+      refreshIabIntentLinks();
+      if (!sessionStorage.getItem('nikola_iab_banner_dismissed')) {
+        const banner = document.getElementById('iabBanner');
+        if (banner) banner.style.display = 'flex';
+      }
+    }
+
+    // ── UI BADGE & SELECTION HELPERS ──
+    function updateSelectionBadge() {
+      if (!selectionBadge || !selectedIndices) return;
+      const count = selectedIndices.size;
+      const dict = T[lang] || T.sl;
+      selectionBadge.textContent = `${count} ${dict.selectedOf || 'izbranih'}`;
+    }
+
+    function updateLbSelectButton() {
+      if (!selectedIndices) return;
+      const isSelected = selectedIndices.has(lbCurrentIndex);
+      const icon = document.getElementById('lb-select-icon');
+      const text = document.getElementById('lb-select-text') || document.querySelector('#lb-select-toggle [data-i18n="lbSelect"]');
+      const dict = T[lang] || T.sl;
+      if (isSelected) {
+        if (icon) icon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        if (text) text.textContent = dict.lbSelected;
+      } else {
+        if (icon) icon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>`;
+        if (text) text.textContent = dict.lbSelect;
+      }
+    }
+
+    // ── LANGUAGE & LOCALIZATION ──
+    function getInitialLang() {
+      const saved = localStorage.getItem('nikola_pref_lang');
+      if (saved && ['sl', 'en', 'mk'].includes(saved)) return saved;
+
+      try {
+        const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '').toLowerCase();
+        if (tz.includes('ljubljana')) return 'sl';
+        if (tz.includes('skopje')) return 'mk';
+
+        const navLangs = (navigator.languages || [navigator.language || '']).map(l => (l || '').toLowerCase());
+        for (const l of navLangs) {
+          if (l.startsWith('sl')) return 'sl';
+          if (l.startsWith('mk')) return 'mk';
+        }
+      } catch(e) {}
+
+      return 'en';
+    }
+
+    let lang = getInitialLang();
+
+    async function autoDetectCountry() {
+      if (localStorage.getItem('nikola_pref_lang')) return;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        let countryCode = '';
+
+        try {
+          const res = await fetch('https://api.country.is', { signal: controller.signal });
+          if (res.ok) {
+            const d = await res.json();
+            countryCode = (d.country || '').toUpperCase();
+          }
+        } catch(e) {}
+
+        if (!countryCode) {
+          try {
+            const res2 = await fetch('https://ipapi.co/country/', { signal: controller.signal });
+            if (res2.ok) countryCode = (await res2.text()).trim().toUpperCase();
+          } catch(e) {}
+        }
+        clearTimeout(timeoutId);
+
+        if (countryCode && !localStorage.getItem('nikola_pref_lang')) {
+          let target = 'en';
+          if (countryCode === 'SI') target = 'sl';
+          else if (countryCode === 'MK') target = 'mk';
+          else target = 'en';
+
+          if (target !== lang) applyLang(target, false);
+        }
+      } catch(e) {}
+    }
+
+    function applyLang(l, userInitiated = false) {
+      lang = l;
+      if (userInitiated) {
+        localStorage.setItem('nikola_pref_lang', l);
+      }
+      const t = T[l];
+      document.documentElement.lang = l;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (t && t[k] !== undefined) el.innerHTML = t[k];
+      });
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+      updateSelectionBadge();
+      updateLbSelectButton();
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.addEventListener('click', () => applyLang(b.dataset.lang, true));
+    });
+
+    applyLang(lang, false);
+    autoDetectCountry();
+
+    // ── CHECK SAVED SESSION & URL PARAMS ──
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramEvent = urlParams.get('event');
+    const paramPass = urlParams.get('pass');
+
+    // ── PASSWORD AUTHENTICATION ──
+    async function handleLoginSubmit(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (gateAlert) gateAlert.style.display = 'none';
+      const passInput = document.getElementById('galleryPassword');
+      const inputPass = passInput ? passInput.value.trim() : '';
+      if (!inputPass) return false;
+      await attemptPasswordLogin(inputPass, paramEvent);
+      return false;
+    }
+
+    if (gateForm) {
+      gateForm.addEventListener('submit', handleLoginSubmit);
+    }
+    if (unlockBtn) {
+      unlockBtn.addEventListener('click', handleLoginSubmit);
+    }
+
+    async function attemptPasswordLogin(pass, expectedEvent = null) {
+      const events = await fetchEventsList();
+      if (!events || !events.length) {
+        gateAlert.textContent = T[lang].errLoadEvents;
+        gateAlert.style.display = 'block';
+        return;
+      }
+
+      // Find match
+      let matchedEvent = null;
+      for (const evt of events) {
+        if (expectedEvent && evt.name.toLowerCase() !== expectedEvent.toLowerCase()) {
+          continue;
+        }
+        if (evt.pass === pass) {
+          matchedEvent = evt.name;
+          break;
+        }
+      }
+
+      // Fallback: If not matched and expectedEvent was specified, try matching ANY event with that password
+      if (!matchedEvent && expectedEvent) {
+        for (const evt of events) {
+          if (evt.pass === pass) {
+            matchedEvent = evt.name;
+            break;
+          }
+        }
+      }
+
+      if (!matchedEvent) {
+        gateAlert.textContent = T[lang].errWrongPass;
+        gateAlert.style.display = 'block';
+        return;
+      }
+
+      currentPass = pass;
+      sessionStorage.setItem('nikola_client_event', matchedEvent);
+      sessionStorage.setItem('nikola_client_pass', pass);
+      refreshIabIntentLinks();
+      unlockGallery(matchedEvent);
+    }
+
+    // Check if previously logged in
+    const savedEvent = sessionStorage.getItem('nikola_client_event');
+    const savedPass = sessionStorage.getItem('nikola_client_pass');
+    if (savedPass) currentPass = savedPass;
+    else if (paramPass) currentPass = paramPass;
+    if (savedEvent) {
+      unlockGallery(savedEvent);
+    } else if (paramPass) {
+      attemptPasswordLogin(paramPass, paramEvent);
+    }
+
+    async function fetchEventsList() {
+      const paths = ['events.txt', 'events', '/deliver/events.txt', '/deliver/events'];
+      for (const p of paths) {
+        try {
+          const res = await fetch(p + '?t=' + Date.now());
+          if (res.ok) {
+            const text = await res.text();
+            const list = [];
+            const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+            for (const line of lines) {
+              const parts = line.split(':');
+              if (parts.length >= 2) {
+                list.push({
+                  name: parts[0].trim(),
+                  pass: parts.slice(1).join(':').trim()
+                });
+              }
+            }
+            return list;
+          }
+        } catch(e) {}
+      }
+      return null;
+    }
+
+    lockBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('nikola_client_event');
+      sessionStorage.removeItem('nikola_client_pass');
+      currentPass = '';
+      activeEvent = null;
+      galleryPhotos = [];
+      selectedIndices.clear();
+      refreshIabIntentLinks();
+      gateSection.style.display = 'block';
+      gallerySection.style.display = 'none';
+      document.getElementById('galleryPassword').value = '';
+    });
+
+    // ── LOAD & RENDER GALLERY (JUSTIFIED ROW LAYOUT MATCHING HOMEPAGE) ──
+    let galleryRatios = [];
+    let galleryLoadedCount = 0;
+
+    async function unlockGallery(eventName) {
+      activeEvent = eventName;
+      refreshIabIntentLinks();
+      gateSection.style.display = 'none';
+      gallerySection.style.display = 'block';
+
+      eventTitle.innerHTML = `Galerija <em>${escapeHtml(eventName)}</em>`;
+      eventMeta.textContent = 'Nalagam fotografije…';
+      photoGrid.innerHTML = '';
+      selectedIndices.clear();
+      updateSelectionBadge();
+
+      // Load manifest.json from deliver/<eventName>/manifest.json
+      let fileNames = [];
+      try {
+        const res = await fetch(`${encodeURIComponent(eventName)}/manifest.json?t=${Date.now()}`);
+        if (res.ok) {
+          fileNames = await res.json();
+        }
+      } catch(e) {}
+
+      if (!fileNames || !fileNames.length) {
+        eventMeta.textContent = T[lang].errNoPhotos;
+        return;
+      }
+
+      // Prepare photo list with thumbnails
+      galleryPhotos = fileNames.map(f => {
+        const dotIndex = f.lastIndexOf('.');
+        const base = dotIndex !== -1 ? f.slice(0, dotIndex) : f;
+        const thumbName = base + '_thumbnail.jpg';
+        return {
+          full: `${encodeURIComponent(eventName)}/${encodeURIComponent(f)}`,
+          thumb: `${encodeURIComponent(eventName)}/${encodeURIComponent(thumbName)}`,
+          originalThumbName: thumbName,
+          filename: f
+        };
+      });
+
+      eventMeta.textContent = `${galleryPhotos.length} ${T[lang].allPhotos}`;
+
+      // Justified layout engine (same as index.html)
+      const GAP = 12;
+      const TARGET_H = 300;
+      galleryRatios = new Array(galleryPhotos.length).fill(null);
+      galleryLoadedCount = 0;
+
+      function buildRows() {
+        const W = photoGrid.clientWidth || 900;
+        const mobile = W < 600;
+        const allRows = [];
+        let i = 0;
+        let prevH = TARGET_H;
+
+        while (i < galleryPhotos.length) {
+          const r = galleryRatios[i];
+          if (r === null) break;
+
+          if (mobile) {
+            allRows.push([{ photo: galleryPhotos[i], idx: i, w: null, h: null, single: false }]);
+            i++;
+          } else {
+            const remaining = galleryPhotos.length - i;
+            let known = 0;
+            for (let k = i; k < galleryPhotos.length && galleryRatios[k] !== null; k++) known++;
+
+            let bestN = 1, bestDiff = Infinity;
+            for (let n = 2; n <= Math.min(4, known); n++) {
+              const total = galleryRatios.slice(i, i+n).reduce((a,b)=>a+b, 0);
+              const h = (W - GAP*(n-1)) / total;
+              if (Math.abs(h - TARGET_H) < bestDiff) { bestDiff = Math.abs(h - TARGET_H); bestN = n; }
+            }
+            const isLast = (i + bestN >= galleryPhotos.length);
+            const n = (known < 2 && !isLast) ? 0 : (remaining === 1 ? 1 : bestN);
+            if (n === 0) break;
+
+            const isSingle = n === 1;
+            const rowRatios = galleryRatios.slice(i, i+n);
+            const totalR = rowRatios.reduce((a,b)=>a+b, 0);
+            const rowH = isSingle ? prevH : Math.round((W - GAP*(n-1)) / totalR);
+            if (!isSingle) prevH = rowH;
+
+            allRows.push(galleryPhotos.slice(i, i+n).map((photo, j) => ({
+              photo, idx: i+j,
+              w: Math.round(rowRatios[j] * rowH),
+              h: rowH, single: isSingle
+            })));
+            i += n;
+          }
+        }
+        return allRows;
+      }
+
+      function domRow(rowItems) {
+        const W = photoGrid.clientWidth || 900;
+        const mobile = W < 600;
+        const row = document.createElement('div');
+        row.className = 'photo-row';
+        if (rowItems.length === 1 && rowItems[0].single) row.style.justifyContent = 'flex-start';
+
+        rowItems.forEach(({ photo, idx, w, h }) => {
+          const card = document.createElement('div');
+          card.className = 'photo-card' + (selectedIndices.has(idx) ? ' selected' : '');
+          card.dataset.index = idx;
+          if (!mobile && w && h) {
+            card.style.width = w + 'px';
+            card.style.height = h + 'px';
+          }
+
+          // Checkbox element
+          const check = document.createElement('div');
+          check.className = 'photo-check';
+          check.title = 'Izberi fotografijo';
+          check.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+          check.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSelect(idx);
+          });
+
+          // Thumbnail image (first 6 fetchPriority=high)
+          const img = document.createElement('img');
+          img.src = photo.thumb;
+          if (idx < 6) {
+            img.fetchPriority = 'high';
+          } else {
+            img.loading = 'lazy';
+          }
+          img.decoding = 'async';
+          img.alt = photo.filename;
+          img.onerror = () => { img.src = photo.full; };
+
+          // Actions overlay
+          const actions = document.createElement('div');
+          actions.className = 'card-actions';
+          actions.innerHTML = `
+            <span class="card-filename">${escapeHtml(photo.filename)}</span>
+            <div class="card-download-icon" title="Prenesi fotografijo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </div>
+          `;
+
+          actions.querySelector('.card-download-icon').addEventListener('click', (e) => {
+            e.stopPropagation();
+            downloadSinglePhoto(idx);
+          });
+
+          card.appendChild(check);
+          card.appendChild(img);
+          card.appendChild(actions);
+
+          card.addEventListener('click', () => openLightbox(idx));
+
+          row.appendChild(card);
+        });
+        return row;
+      }
+
+      window._renderGalleryRows = function() {
+        photoGrid.innerHTML = '';
+        const rows = buildRows();
+        rows.forEach(r => photoGrid.appendChild(domRow(r)));
+      };
+
+      function onRatioLoaded() {
+        if (galleryLoadedCount === galleryPhotos.length) {
+          window._renderGalleryRows();
+        } else {
+          if (photoGrid.children.length === 0) {
+            const initialRows = buildRows();
+            if (initialRows.length > 0) {
+              initialRows.forEach(r => photoGrid.appendChild(domRow(r)));
+            }
+          }
+        }
+      }
+
+      // Load thumbnails to measure natural ratios
+      galleryPhotos.forEach((item, idx) => {
+        const img = new Image();
+        img.onload = () => {
+          galleryRatios[idx] = img.naturalWidth / img.naturalHeight;
+          galleryLoadedCount++;
+          onRatioLoaded();
+        };
+        img.onerror = () => {
+          galleryRatios[idx] = 1.5;
+          galleryLoadedCount++;
+          onRatioLoaded();
+        };
+        img.src = item.thumb;
+      });
+    }
+
+    // Window resize handler to re-balance justified rows
+    window.addEventListener('resize', () => {
+      clearTimeout(window._galleryResizeTimer);
+      window._galleryResizeTimer = setTimeout(() => {
+        if (galleryPhotos.length && galleryLoadedCount === galleryPhotos.length && typeof window._renderGalleryRows === 'function') {
+          window._renderGalleryRows();
+        }
+      }, 150);
+    });
+
+    // ── SELECTION LOGIC ──
+    function toggleSelect(idx) {
+      const card = document.querySelector(`.photo-card[data-index="${idx}"]`);
+      if (selectedIndices.has(idx)) {
+        selectedIndices.delete(idx);
+        if (card) card.classList.remove('selected');
+      } else {
+        selectedIndices.add(idx);
+        if (card) card.classList.add('selected');
+      }
+      updateSelectionBadge();
+      updateLbSelectButton();
+    }
+
+    selectAllBtn.addEventListener('click', () => {
+      galleryPhotos.forEach((_, idx) => {
+        selectedIndices.add(idx);
+        const card = document.querySelector(`.photo-card[data-index="${idx}"]`);
+        if (card) card.classList.add('selected');
+      });
+      updateSelectionBadge();
+      updateLbSelectButton();
+    });
+
+    deselectAllBtn.addEventListener('click', () => {
+      selectedIndices.clear();
+      document.querySelectorAll('.photo-card').forEach(card => card.classList.remove('selected'));
+      updateSelectionBadge();
+      updateLbSelectButton();
+    });
+
+    // ── LIGHTBOX ACTIONS ──
+    function openLightbox(idx) {
+      lbCurrentIndex = idx;
+      showLbPhoto();
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+      lbImg.src = '';
+    }
+
+    function showLbPhoto() {
+      const item = galleryPhotos[lbCurrentIndex];
+      const targetIdx = lbCurrentIndex;
+
+      // Instant display of thumbnail without opacity delay
+      lbImg.style.opacity = '1';
+      lbImg.src = item.thumb;
+      lbImg.onerror = () => { lbImg.src = item.full; };
+      lbCounter.textContent = `${lbCurrentIndex + 1} / ${galleryPhotos.length}`;
+      updateLbSelectButton();
+
+      // Progressive full-resolution upgrade: once full image loads in background, upgrade seamlessly
+      const fullImg = new Image();
+      fullImg.onload = () => {
+        if (lbCurrentIndex === targetIdx && lightbox.classList.contains('active')) {
+          lbImg.src = item.full;
+        }
+      };
+      fullImg.src = item.full;
+
+      // Preload next and previous thumbnails in memory for 0ms transition
+      if (galleryPhotos.length > 1) {
+        const nextIdx = (lbCurrentIndex + 1) % galleryPhotos.length;
+        const prevIdx = (lbCurrentIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
+        const p1 = new Image(); p1.src = galleryPhotos[nextIdx].thumb;
+        const p2 = new Image(); p2.src = galleryPhotos[prevIdx].thumb;
+      }
+    }
+
+    lbPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      lbCurrentIndex = (lbCurrentIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
+      showLbPhoto();
+    });
+
+    lbNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      lbCurrentIndex = (lbCurrentIndex + 1) % galleryPhotos.length;
+      showLbPhoto();
+    });
+
+    lbClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') { lbCurrentIndex = (lbCurrentIndex - 1 + galleryPhotos.length) % galleryPhotos.length; showLbPhoto(); }
+      if (e.key === 'ArrowRight') { lbCurrentIndex = (lbCurrentIndex + 1) % galleryPhotos.length; showLbPhoto(); }
+    });
+
+    lbSelectToggle.addEventListener('click', () => {
+      toggleSelect(lbCurrentIndex);
+    });
+
+    lbDownload.addEventListener('click', () => {
+      downloadSinglePhoto(lbCurrentIndex);
+    });
+
+    lbShare.addEventListener('click', async () => {
+      await shareSinglePhoto(lbCurrentIndex);
+    });
+
+    // ── DOWNLOAD METHODS ──
+
+    // Download a single photo
+    async function downloadSinglePhoto(idx) {
+      if (isAndroid && isAndroidInAppBrowser()) {
+        openInAndroidChrome();
+        showIabModal();
+        return;
+      }
+      if (galleryPhotos[idx]) {
+        await downloadSinglePhotoByItem(galleryPhotos[idx]);
+      }
+    }
+
+    // Share / Save single photo to Mobile Photos (Camera Roll)
+    async function shareSinglePhoto(idx) {
+      const item = galleryPhotos[idx];
+      if (!item) return;
+
+      if (isAndroid && isAndroidInAppBrowser()) {
+        openInAndroidChrome();
+        showIabModal();
+        return;
+      }
+
+      // On Android: direct download immediately saves image to phone storage and indexes into Gallery
+      if (isAndroid) {
+        await downloadSinglePhotoByItem(item);
+        return;
+      }
+
+      try {
+        showProgress(true, 'Pripravljam fotografijo za Camera Roll…', 30);
+        const res = await fetch(item.full);
+        const blob = await res.blob();
+        const mimeType = item.filename.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+        const file = new File([blob], item.filename, { type: mimeType });
+        showProgress(false);
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: item.filename,
+          });
+        } else {
+          // Fallback if Web Share API with files is unsupported
+          await downloadSinglePhotoByItem(item);
+        }
+      } catch(e) {
+        showProgress(false);
+        if (e.name === 'AbortError') return;
+        console.error('Napaka pri shranjevanju v Camera Roll:', e);
+      }
+    }
+
+    function getSelectedOrAllPhotos() {
+      if (selectedIndices.size > 0) {
+        return Array.from(selectedIndices).map(i => galleryPhotos[i]);
+      }
+      return galleryPhotos;
+    }
+
+    // ── METHOD 1: COMPUTER / LAPTOP (1 photo -> direct JPG, >1 photos -> ZIP bundle) ──
+    const downloadFolderBtn = document.getElementById('downloadFolderBtn');
+    downloadFolderBtn.addEventListener('click', async () => {
+      const targetPhotos = getSelectedOrAllPhotos();
+      if (!targetPhotos.length) {
+        alert(T[lang].errNoPhotos);
+        return;
+      }
+
+      if (isAndroid && isAndroidInAppBrowser()) {
+        openInAndroidChrome();
+        showIabModal();
+        return;
+      }
+
+      if (targetPhotos.length === 1) {
+        // Exactly 1 photo selected: direct JPG download
+        await downloadSinglePhotoByItem(targetPhotos[0]);
+      } else {
+        // More than 1 photo: bundle into a single ZIP file
+        await downloadZipPhotos(targetPhotos);
+      }
+    });
+
+    async function downloadSinglePhotoByItem(photo) {
+      showProgress(true, `Prenašam ${photo.filename}…`, 30);
+      try {
+        const res = await fetch(photo.full);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = photo.filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 2500);
+        showProgress(false);
+      } catch(err) {
+        const a = document.createElement('a');
+        a.href = photo.full;
+        a.download = photo.filename;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => document.body.removeChild(a), 2000);
+        showProgress(false);
+      }
+    }
+
+    async function downloadZipPhotos(photos) {
+      if (typeof JSZip === 'undefined') {
+        alert('Orodje za ZIP se še nalaga. Prosimo poskusite znova čez nekaj sekund.');
+        return;
+      }
+
+      const zip = new JSZip();
+      showProgress(true, `Pripravljam paket ZIP (0 / ${photos.length})…`, 0);
+
+      const total = photos.length;
+      for (let i = 0; i < total; i++) {
+        const photo = photos[i];
+        const pct = Math.round(((i + 1) / total) * 75);
+        updateProgress(`Prenašam ${i + 1} / ${total}: ${photo.filename}`, pct);
+        try {
+          const res = await fetch(photo.full);
+          const blob = await res.blob();
+          zip.file(photo.filename, blob);
+        } catch(e) {
+          console.error('Napaka pri prenosu za zip:', photo.filename, e);
+        }
+      }
+
+      updateProgress('Ustvarjam ZIP paket…', 85);
+      const zipBlob = await zip.generateAsync({
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 6 }
+      }, (metadata) => {
+        const p = 85 + Math.round(metadata.percent * 0.15);
+        updateProgress(`Stiskam paket: ${Math.round(metadata.percent)}%`, p);
+      });
+
+      const zipName = `${activeEvent || 'galerija'}_fotografije.zip`;
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = zipName;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 3000);
+
+      showProgress(false);
+      alert(T[lang].savePcSuccess);
+    }
+
+    // ── METHOD 2: MOBILE / PHONE SAVE DIRECTLY TO CAMERA ROLL (AT ONCE) ──
+    const saveCameraRollBtn = document.getElementById('saveCameraRollBtn');
+    saveCameraRollBtn.addEventListener('click', async () => {
+      const targetPhotos = getSelectedOrAllPhotos();
+      if (!targetPhotos.length) {
+        alert(T[lang].errNoPhotos);
+        return;
+      }
+
+      const total = targetPhotos.length;
+
+      // Check if Android in-app browser (Instagram, Facebook, etc.)
+      if (isAndroid && isAndroidInAppBrowser()) {
+        openInAndroidChrome();
+        showIabModal();
+        return;
+      }
+
+      // ── ANDROID: DIRECT MEDIA DOWNLOAD TO GALLERY / CAMERA ROLL ──
+      if (isAndroid) {
+        showProgress(true, `Prenašam v galerijo telefona (0 / ${total})…`, 5);
+        for (let i = 0; i < total; i++) {
+          const photo = targetPhotos[i];
+          const pct = Math.round(((i + 1) / total) * 100);
+          updateProgress(`Prenašam v galerijo telefona (${i + 1} / ${total}): ${photo.filename}`, pct);
+
+          try {
+            const res = await fetch(photo.full);
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = photo.filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }, 3000);
+          } catch(e) {
+            console.error('Napaka pri prenosu za galerijo:', photo.filename, e);
+          }
+
+          if (i < total - 1) {
+            await new Promise(r => setTimeout(r, 450));
+          }
+        }
+
+        showProgress(false);
+        alert(T[lang].savePhoneSuccess);
+        return;
+      }
+
+      // ── iOS & OTHER PLATFORMS: NATIVE WEB SHARE API (SAVE IMAGES) ──
+      if (!navigator.share) {
+        alert('Vaš brskalnik ne podpira neposrednega shranjevanja v Camera Roll. Za shranjevanje odprite stran v brskalniku Safari ali uporabite prenos za računalnik.');
+        return;
+      }
+
+      try {
+        const total = targetPhotos.length;
+        showProgress(true, `Pripravljam fotografije za Camera Roll (0 / ${total})…`, 10);
+
+        let completed = 0;
+        const fetchPhotoFile = async (photo) => {
+          const res = await fetch(photo.full);
+          const blob = await res.blob();
+          const mimeType = photo.filename.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+          completed++;
+          updateProgress(`Pripravljam fotografije za Camera Roll (${completed} / ${total})…`, Math.round((completed / total) * 90));
+          return new File([blob], photo.filename, { type: mimeType });
+        };
+
+        // Fetch concurrently for speed and preserving user activation
+        const filesToShare = await Promise.all(targetPhotos.map(p => fetchPhotoFile(p)));
+
+        showProgress(false);
+
+        // Share single or multiple images directly to Camera Roll
+        if (navigator.canShare && navigator.canShare({ files: filesToShare })) {
+          await navigator.share({
+            files: filesToShare,
+            title: activeEvent ? `Galerija ${activeEvent}` : 'Fotografije'
+          });
+        } else if (navigator.canShare && filesToShare.length > 1) {
+          // If total size exceeds single share limit on older iOS, share the largest batch accepted
+          let batchLimit = Math.min(filesToShare.length, 15);
+          while (batchLimit > 0 && !navigator.canShare({ files: filesToShare.slice(0, batchLimit) })) {
+            batchLimit -= 1;
+          }
+          if (batchLimit > 0) {
+            await navigator.share({
+              files: filesToShare.slice(0, batchLimit),
+              title: activeEvent ? `Galerija ${activeEvent}` : 'Fotografije'
+            });
+          } else {
+            alert('Vaš brskalnik ne podpira hkratnega deljenja toliko datotek. Prosimo izberite manjše število fotografij naenkrat.');
+          }
+        } else {
+          // Single file or fallback when canShare returns false
+          try {
+            await navigator.share({
+              files: filesToShare,
+              title: activeEvent ? `Galerija ${activeEvent}` : 'Fotografije'
+            });
+          } catch(err2) {
+            if (err2.name !== 'AbortError') {
+              alert('Pri shranjevanju v Camera Roll je prišlo do napake. Prepričajte se, da uporabljate Safari ali uradni brskalnik telefona.');
+            }
+          }
+        }
+      } catch(err) {
+        showProgress(false);
+        if (err.name === 'AbortError') return;
+        console.error('Napaka pri Camera Roll prenosu:', err);
+      }
+    });
+
+    // ── PROGRESS MODAL HELPERS ──
+    function showProgress(show, message = '', pct = 0) {
+      progressModal.style.display = show ? 'flex' : 'none';
+      if (show) {
+        progressMsg.textContent = message;
+        pBarFill.style.width = `${pct}%`;
+        pPercentage.textContent = `${pct}%`;
+      }
+    }
+
+    function updateProgress(message, pct) {
+      progressMsg.textContent = message;
+      pBarFill.style.width = `${pct}%`;
+      pPercentage.textContent = `${pct}%`;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
