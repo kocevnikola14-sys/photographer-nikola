@@ -1,2 +1,0 @@
-# photographer-nikola
-portfolio
